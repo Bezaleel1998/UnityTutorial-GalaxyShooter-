@@ -11,10 +11,42 @@ namespace PlayerDatas
     {
 
         #region player_profile
+        [Header("Player Profile")]
 
         public string player_name;
 
-        public float player_speed;
+        #endregion
+
+        #region player_action
+
+        [Header("Action Variable")]
+
+        [SerializeField]
+        internal float player_speed;
+
+        [SerializeField]
+        internal float atkDmg;
+
+        [SerializeField]
+        internal float playerHP;
+
+        [SerializeField]
+        private float bulletSpeed;
+
+        [SerializeField] 
+        private float _fireRate = 2f;
+
+        [SerializeField]
+        private float _canFire = -1f;
+
+        #endregion
+
+        #region 3DMODEL
+
+        [Header("3D Model")]
+
+        [SerializeField]
+        internal GameObject charPrefab;
 
         #endregion
 
