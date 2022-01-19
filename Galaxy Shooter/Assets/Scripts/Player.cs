@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     [Header("Player Mechanic")]
     [SerializeField]
     private float _speed = 5.0f;
+    [SerializeField] private GameObject _playerPrefab;
 
     [Header("Player Movement")]
     private float _horizontalInput;
@@ -27,19 +28,17 @@ public class Player : MonoBehaviour
     [Header("Action Variable")]
     [SerializeField] private GameObject _bulletPrefab;
     [SerializeField] private GameObject _parentBullet;
-    [SerializeField] private float _selfDestructTime = 2f;
     [SerializeField] private float _fireRate = .8f;
     private float _canFire = -1f;
-    internal float _attackDmg;
-    internal float _playerHP;
+    private float _attackDmg = 2f;
+    private int _playerHP = 3;
 
     #endregion
 
     private void Awake()
     {
 
-        //take the current position = new position(0, 0, 0)
-        this.transform.position = new Vector3(0, 0, 0);
+        PlayerSpawn();
                
     }
 
@@ -53,7 +52,7 @@ public class Player : MonoBehaviour
     void Update()
     {
 
-        PlayerAttack(_bulletPrefab, _parentBullet, _selfDestructTime);
+        PlayerAttack(_bulletPrefab, _parentBullet, _attackDmg);
 
     }
 
@@ -62,6 +61,44 @@ public class Player : MonoBehaviour
         Boundaries();
     }
 
+
+    private void PlayerSpawn()
+    {
+
+        //spawn Player3D
+        //take the current position = new position(0, 0, 0)
+        GameObject playerChar = Instantiate(_playerPrefab, transform.position, Quaternion.identity, this.transform);
+        this.transform.position = new Vector3(0, -4, 0);
+
+    }
+
+    public void Damage()
+    {
+
+        _playerHP --;
+        
+        //if life is 0 then player destroyed
+        if (_playerHP <= 0)
+        {
+
+            //Show GameOverUI
+            //Destroy Player3D inside this code (this parent)
+            foreach (Transform child in this.transform)
+            {
+                GameObject.Destroy(child.gameObject);
+            }
+
+            //pause the game
+
+        }
+        else
+        {
+
+            Debug.Log("Player Life = " + _playerHP);
+        
+        }
+
+    }
 
     void PlayerMovement()
     {
@@ -75,17 +112,10 @@ public class Player : MonoBehaviour
 
     }
 
-    void Boundaries()
-    {
-
-        //Mathf.Clamp(what coordinate that you want to clamp, min val, max val)
-        this.transform.position = new Vector3(Mathf.Clamp(this.transform.position.x, _horizontalMin, _horizontalMax), 
-                Mathf.Clamp(this.transform.position.y, _verticalMin, _verticalMax), this.transform.position.z);
-
-    }
+    
 
 
-    void PlayerAttack(GameObject bPrefab, GameObject parent, float selfDestructTimer)
+    void PlayerAttack(GameObject bPrefab, GameObject parent, float _dmg)
     {
         //when space key is pressed
         //GetKeyDown is for once at a time
@@ -98,11 +128,33 @@ public class Player : MonoBehaviour
             //spawn bullet
             Vector3 bulletOffset = new Vector3(0, 1f, 0);
             GameObject clonePrefabs = Instantiate(bPrefab, transform.position + bulletOffset, Quaternion.identity, parent.transform);
-
-            //self destruct after amount of time
-            //Destroy(clonePrefabs, selfDestructTimer);
+            
+            //set the attack damage
+            clonePrefabs.GetComponent<LaserBehaviour>().SetDefault(_dmg);
 
         }
+
+    }
+
+    private void OnTriggerEnter(Collider col)
+    {
+        
+        if (col.tag == "Booster")
+        {
+
+            //add player ability / booster
+            
+        }
+
+    }
+
+
+    void Boundaries()
+    {
+
+        //Mathf.Clamp(what coordinate that you want to clamp, min val, max val)
+        this.transform.position = new Vector3(Mathf.Clamp(this.transform.position.x, _horizontalMin, _horizontalMax),
+                Mathf.Clamp(this.transform.position.y, _verticalMin, _verticalMax), this.transform.position.z);
 
     }
 

@@ -2,38 +2,37 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-namespace PlayerDatas
+namespace EnemyDatas
 {
 
-    [CreateAssetMenu(fileName = "Player", menuName = "Player/Add New Character")]
-    public class PlayerDatas : ScriptableObject
+    [CreateAssetMenu(fileName = "Enemy", menuName = "Enemy/Add New Character")]
+    public class EnemyDatas : ScriptableObject
     {
 
-        #region player_profile
-        [Header("Player Profile")]
+        #region enemy_profile
+        [Header("Enemy Profile")]
 
-        public string player_name;
+        public string enemy_name;
 
         #endregion
 
-        #region player_action
+        #region enemy_action
 
         [Header("Action Variable")]
 
         [SerializeField]
-        private float player_speed;
+        private float enemy_spd;
 
         [SerializeField]
         private float atkDmg;
 
         [SerializeField]
-        private int playerHP;
+        private int enemyHP;
 
         [SerializeField]
         private float bulletSpeed;
 
-        [SerializeField] 
+        [SerializeField]
         private float _fireRate = 2f;
 
         [SerializeField]
@@ -49,7 +48,6 @@ namespace PlayerDatas
         private GameObject charPrefab;
 
         #endregion
-
 
     }
 
