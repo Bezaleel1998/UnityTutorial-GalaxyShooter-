@@ -12,8 +12,8 @@ public class EnemyBehaviour : MonoBehaviour
     [Header("Enemy Boundaries")]
     [SerializeField] private float _horizontalMin = -9.18f;
     [SerializeField] private float _horizontalMax = 9.33f;
-    [SerializeField] private float _verticalMin = -3.9f;
-    [SerializeField] private float _verticalMax = 6f;
+    [SerializeField] private float _verticalMin = -4f;
+    [SerializeField] private float _verticalMax = 6.5f;
 
     [Header("Action Variable")]
     private int _enemyHP = 1;

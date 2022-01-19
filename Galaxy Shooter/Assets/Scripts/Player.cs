@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _speed = 5.0f;
     [SerializeField] private GameObject _playerPrefab;
+    [SerializeField] private SpawnManager spManager;
 
     [Header("Player Movement")]
     private float _horizontalInput;
@@ -39,6 +40,14 @@ public class Player : MonoBehaviour
     {
 
         PlayerSpawn();
+
+        if (spManager == null)
+        {
+
+            //spManager = gameObject.GetComponent(typeof(SpawnManager)) as SpawnManager;
+            spManager = GameObject.FindGameObjectWithTag("SpawnManager").GetComponent<SpawnManager>();
+
+        }
                
     }
 
@@ -68,6 +77,8 @@ public class Player : MonoBehaviour
         //spawn Player3D
         //take the current position = new position(0, 0, 0)
         GameObject playerChar = Instantiate(_playerPrefab, transform.position, Quaternion.identity, this.transform);
+        playerChar.transform.name = _playerPrefab.name;
+
         this.transform.position = new Vector3(0, -4, 0);
 
     }
@@ -87,7 +98,9 @@ public class Player : MonoBehaviour
             {
                 GameObject.Destroy(child.gameObject);
             }
-
+            //communicated with spawn manager 
+            //let them know to stop running
+            spManager.OnPlayerDead();
             //pause the game
 
         }
