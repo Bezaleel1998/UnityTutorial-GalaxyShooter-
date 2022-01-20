@@ -10,7 +10,7 @@ public class LaserBehaviour : MonoBehaviour
     [Header("Laser Mechanic")]
     [SerializeField] private float _bulletSpeed = 8f;
     [SerializeField] private float _bulletHeight = 7f;
-    [SerializeField] private float _damageAmnt = 0f;
+    [SerializeField] private float _damageAmnt = 1f;
     //[SerializeField] private float _selfDestructTime = 2f;
 
     #endregion
@@ -44,6 +44,7 @@ public class LaserBehaviour : MonoBehaviour
 
     }
 
+    //if you want to convert it to 2D just use OnTriggerEnter2D(Collider2D col)
     private void OnTriggerEnter(Collider col)
     {
 

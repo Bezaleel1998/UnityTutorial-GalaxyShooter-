@@ -28,11 +28,14 @@ public class Player : MonoBehaviour
 
     [Header("Action Variable")]
     [SerializeField] private GameObject _bulletPrefab;
+    [SerializeField] private GameObject _trippleShootPrefab;
     [SerializeField] private GameObject _parentBullet;
     [SerializeField] private float _fireRate = .8f;
     private float _canFire = -1f;
     private float _attackDmg = 2f;
     private int _playerHP = 3;
+    [SerializeField] private bool _isTripleShootEnabled = false;
+    [SerializeField] private Vector3 bulletOffset = new Vector3(0, 1f, 0);
 
     #endregion
 
@@ -61,7 +64,7 @@ public class Player : MonoBehaviour
     void Update()
     {
 
-        PlayerAttack(_bulletPrefab, _parentBullet, _attackDmg);
+        PlayerAttack();
 
     }
 
@@ -125,30 +128,65 @@ public class Player : MonoBehaviour
 
     }
 
-    
 
 
-    void PlayerAttack(GameObject bPrefab, GameObject parent, float _dmg)
+
+    #region PlayerAttackCode
+
+    void PlayerAttack()
     {
         //when space key is pressed
         //GetKeyDown is for once at a time
         //GetKey is for holding the button
         if (Input.GetKey(KeyCode.Space) && Time.time > _canFire)
         {
+
             //for fire rate / cooldown system
             _canFire = Time.time + _fireRate;
 
-            //spawn bullet
-            Vector3 bulletOffset = new Vector3(0, 1f, 0);
-            GameObject clonePrefabs = Instantiate(bPrefab, transform.position + bulletOffset, Quaternion.identity, parent.transform);
-            
-            //set the attack damage
-            clonePrefabs.GetComponent<LaserBehaviour>().SetDefault(_dmg);
+            if (_isTripleShootEnabled == true)
+            {
 
+                //index 1 for triple shoot laser
+                TripleShootLaserFire(_trippleShootPrefab, _parentBullet, _attackDmg);
+
+            }
+            else
+            {
+                //index 0 for normal shoot laser
+                FireLaser(_bulletPrefab, _parentBullet, _attackDmg);
+
+            }
+            
         }
 
     }
 
+    void FireLaser(GameObject bPrefab, GameObject parent, float _dmg)
+    {
+
+        //spawn bullet
+        GameObject clonePrefabs = Instantiate(bPrefab, transform.position + bulletOffset, Quaternion.identity, parent.transform);
+
+        //set the attack damage
+        clonePrefabs.GetComponent<LaserBehaviour>().SetDefault(_dmg);
+
+    }
+
+    void TripleShootLaserFire(GameObject triplePrefabs, GameObject parent, float _dmg)
+    { 
+
+        //spawn bullet
+        GameObject clonePrefabs = Instantiate(triplePrefabs, transform.position + bulletOffset, Quaternion.identity, parent.transform);
+
+        //set the attack damage
+        clonePrefabs.GetComponent<TripleshootBehaviour>().SetAllChildAttackDamage(_dmg);
+
+    }
+
+    #endregion
+
+    //if you want to convert it to 2D just use OnTriggerEnter2D(Collider2D col)
     private void OnTriggerEnter(Collider col)
     {
         
@@ -156,6 +194,8 @@ public class Player : MonoBehaviour
         {
 
             //add player ability / booster
+            //in this case enable triple shoot
+            _isTripleShootEnabled = true;
             
         }
 
