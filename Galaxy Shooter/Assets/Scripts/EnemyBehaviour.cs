@@ -25,6 +25,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     }
 
+    //if you want to convert it to 2D just use OnTriggerEnter2D(Collider2D col)
     private void OnTriggerEnter(Collider col)
     {
 
