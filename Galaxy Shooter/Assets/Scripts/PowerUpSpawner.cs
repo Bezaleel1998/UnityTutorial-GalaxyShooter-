@@ -2,12 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpawnManager : MonoBehaviour
+public class PowerUpSpawner : MonoBehaviour
 {
-
     [Header("Enemy Spawner")]
-    [SerializeField] private GameObject _enemyPrefab;
-    [SerializeField] private float _spawnDelay = 5f;
+    [SerializeField] private GameObject _PowerUpPrefabs;
+    [SerializeField] private float _spawnDelay = 10f;
     private bool _stopSpawning = false;
 
     [Header("Enemy Boundaries")]
@@ -19,18 +18,13 @@ public class SpawnManager : MonoBehaviour
     private void Awake()
     {
 
-        //StartCoroutine(SpawnRoutine(_spawnDelay, _enemyNumber));
         StartCoroutine(SpawnRoutine(_spawnDelay));
 
     }
 
-    //spawn every 5 second
-    //Create a Coroutines of type IEnumerator -- Yield Events
-    //use while loop
-
-    IEnumerator SpawnRoutine(float _delay)//, int _enemyNumber)
+    IEnumerator SpawnRoutine(float _delay)
     {
-        
+
         int i = 0;
 
         while (_stopSpawning == false)
@@ -38,9 +32,11 @@ public class SpawnManager : MonoBehaviour
 
             float rdmHorizontal = Random.Range(_horizontalMin, _horizontalMax);
             Vector3 spawnPos = new Vector3(rdmHorizontal, _verticalMax, 0f);
-            GameObject enemyClone = Instantiate(_enemyPrefab, spawnPos, Quaternion.identity, this.transform);
-            enemyClone.transform.name = _enemyPrefab.name + " " + i++;
-            yield return new WaitForSeconds(_delay);
+            
+            GameObject powerUpClone = Instantiate(_PowerUpPrefabs, spawnPos, Quaternion.identity, this.transform);
+            powerUpClone.transform.name = _PowerUpPrefabs.name + " " + i++;
+
+            yield return new WaitForSeconds(Random.Range(3, _delay));
 
         }
 
@@ -52,5 +48,4 @@ public class SpawnManager : MonoBehaviour
         _stopSpawning = true;
 
     }
-
 }

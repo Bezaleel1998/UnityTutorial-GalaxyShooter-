@@ -8,6 +8,8 @@ TagManager:
   - Laser
   - SpawnManager
   - GameManager
+  - TripleShoot
+  - PowerUpSpawner
   layers:
   - Default
   - TransparentFX

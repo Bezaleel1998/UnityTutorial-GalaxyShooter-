@@ -14,7 +14,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _speed = 5.0f;
     [SerializeField] private GameObject _playerPrefab;
-    [SerializeField] private SpawnManager spManager;
+    [SerializeField] private SpawnManager _spManager;
+    [SerializeField] private PowerUpSpawner _powerUpManager;
 
     [Header("Player Movement")]
     private float _horizontalInput;
@@ -27,8 +28,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float _verticalMax = 6f;
 
     [Header("Action Variable")]
-    [SerializeField] private GameObject _bulletPrefab;
-    [SerializeField] private GameObject _trippleShootPrefab;
+    [SerializeField] private GameObject[] _bulletPrefab;
     [SerializeField] private GameObject _parentBullet;
     [SerializeField] private float _fireRate = .8f;
     private float _canFire = -1f;
@@ -44,14 +44,21 @@ public class Player : MonoBehaviour
 
         PlayerSpawn();
 
-        if (spManager == null)
+        if (_spManager == null)
         {
 
             //spManager = gameObject.GetComponent(typeof(SpawnManager)) as SpawnManager;
-            spManager = GameObject.FindGameObjectWithTag("SpawnManager").GetComponent<SpawnManager>();
+            _spManager = GameObject.FindGameObjectWithTag("SpawnManager").GetComponent<SpawnManager>();
 
         }
-               
+
+        if (_powerUpManager == null)
+        {
+
+            _powerUpManager = GameObject.FindGameObjectWithTag("PowerUpSpawner").GetComponent<PowerUpSpawner>();
+
+        }
+
     }
 
     void FixedUpdate()
@@ -74,6 +81,8 @@ public class Player : MonoBehaviour
     }
 
 
+    #region PlayerSpawn,Damage,AndMovement
+
     private void PlayerSpawn()
     {
 
@@ -89,8 +98,8 @@ public class Player : MonoBehaviour
     public void Damage()
     {
 
-        _playerHP --;
-        
+        _playerHP--;
+
         //if life is 0 then player destroyed
         if (_playerHP <= 0)
         {
@@ -101,9 +110,11 @@ public class Player : MonoBehaviour
             {
                 GameObject.Destroy(child.gameObject);
             }
+            Debug.Log("Player Destroyed");
             //communicated with spawn manager 
             //let them know to stop running
-            spManager.OnPlayerDead();
+            _spManager.OnPlayerDead();
+            _powerUpManager.OnPlayerDead();
             //pause the game
 
         }
@@ -111,7 +122,7 @@ public class Player : MonoBehaviour
         {
 
             Debug.Log("Player Life = " + _playerHP);
-        
+
         }
 
     }
@@ -122,20 +133,19 @@ public class Player : MonoBehaviour
         _horizontalInput = Input.GetAxis("Horizontal");
         _verticalInput = Input.GetAxis("Vertical");
         //new Vector3(x, y, z) * horizontal input (-1 or 1) * speed of movement * real time
-        
+
         Vector3 dir = new Vector3(_horizontalInput, _verticalInput, 0);
         this.transform.Translate(dir.normalized * _speed * Time.deltaTime);
 
     }
 
-
-
+    #endregion
 
     #region PlayerAttackCode
 
     void PlayerAttack()
     {
-        //when space key is pressed
+        
         //GetKeyDown is for once at a time
         //GetKey is for holding the button
         if (Input.GetKey(KeyCode.Space) && Time.time > _canFire)
@@ -148,13 +158,13 @@ public class Player : MonoBehaviour
             {
 
                 //index 1 for triple shoot laser
-                TripleShootLaserFire(_trippleShootPrefab, _parentBullet, _attackDmg);
+                TripleShootLaserFire(_bulletPrefab[1], _parentBullet, _attackDmg);
 
             }
             else
             {
                 //index 0 for normal shoot laser
-                FireLaser(_bulletPrefab, _parentBullet, _attackDmg);
+                FireLaser(_bulletPrefab[0], _parentBullet, _attackDmg);
 
             }
             
@@ -184,23 +194,27 @@ public class Player : MonoBehaviour
 
     }
 
-    #endregion
-
-    //if you want to convert it to 2D just use OnTriggerEnter2D(Collider2D col)
-    private void OnTriggerEnter(Collider col)
+    public void TripleShootActivation(float activationTime)
     {
-        
-        if (col.tag == "Booster")
-        {
 
-            //add player ability / booster
-            //in this case enable triple shoot
-            _isTripleShootEnabled = true;
-            
-        }
+        _isTripleShootEnabled = true;
+        //Start Counting down coroutine for triple shoot
+        StartCoroutine(TripleShootPowerDownRoutine(activationTime));
 
     }
 
+    IEnumerator TripleShootPowerDownRoutine(float activationTime)
+    {
+        
+        yield return new WaitForSeconds(activationTime);
+        _isTripleShootEnabled = false;
+
+    }
+
+
+    #endregion
+
+    #region BorderOfGameplay
 
     void Boundaries()
     {
@@ -210,5 +224,7 @@ public class Player : MonoBehaviour
                 Mathf.Clamp(this.transform.position.y, _verticalMin, _verticalMax), this.transform.position.z);
 
     }
+
+    #endregion
 
 }
