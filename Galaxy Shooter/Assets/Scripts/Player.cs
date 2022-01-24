@@ -35,12 +35,14 @@ public class Player : MonoBehaviour
     private float _canFire = -1f;
     private float _attackDmg = 2f;
     private int _playerHP = 3;
+    [SerializeField] private Vector3 bulletOffset = new Vector3(0, 1f, 0);
     [SerializeField] private bool _isTripleShootEnabled = false;
     [SerializeField] private bool _isSpeedUpEnabled = false;
-    [SerializeField] private Vector3 bulletOffset = new Vector3(0, 1f, 0);
+    [SerializeField] private bool _isShieldEnabled = false;
 
     [Header("Other variable")]
     [SerializeField] private GameManager gM;
+    [SerializeField] private GameObject _shieldGameObject;
 
     #endregion
 
@@ -48,6 +50,8 @@ public class Player : MonoBehaviour
     {
 
         PlayerSpawn();
+
+        _shieldGameObject.SetActive(false);
 
         if (_spManager == null)
         {
@@ -84,6 +88,7 @@ public class Player : MonoBehaviour
     {
 
         PlayerAttack();
+        ShieldStatus();
 
     }
 
@@ -111,6 +116,19 @@ public class Player : MonoBehaviour
     {
 
         _playerHP--;
+
+        if (_playerHP <= 0)
+        {
+
+            Debug.Log("Player Has Been Destroyed");
+
+        }
+        else
+        {
+
+            Debug.Log("Player Has " + _playerHP + " life(s) left...");
+
+        }
 
     }
 
@@ -271,6 +289,53 @@ public class Player : MonoBehaviour
 
     }
 
+
+    #endregion
+
+    #region ShieldPowerUp
+
+    public void ShieldActive(float timeActivation)
+    {
+
+        _isShieldEnabled = true;
+        StartCoroutine(ShieldActiveTime(timeActivation));
+
+    }
+
+    public void ShieldHit()
+    {
+
+        _isShieldEnabled = false;
+
+    }
+
+    void ShieldStatus()
+    {
+
+        
+        if (_isShieldEnabled == true)
+        {
+
+            _shieldGameObject.SetActive(true);
+            Debug.Log("ShieldDeployed");
+
+        }
+        else
+        {
+            
+            _shieldGameObject.SetActive(false);
+
+        }
+
+    }
+
+    IEnumerator ShieldActiveTime(float timeActivation)
+    {
+
+        yield return new WaitForSeconds(timeActivation);
+        _isShieldEnabled = false;
+
+    }
 
     #endregion
 

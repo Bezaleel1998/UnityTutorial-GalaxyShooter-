@@ -46,6 +46,23 @@ public class EnemyBehaviour : MonoBehaviour
 
         }
 
+        if (col.tag == "Shield")
+        {
+
+            Player player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+
+            if (player != null)
+            {
+
+                player.ShieldHit();
+
+            }
+
+            Debug.Log("Shield Destroyed");
+            Destroy(this.gameObject);
+
+        }
+
     }
 
 

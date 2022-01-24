@@ -12,6 +12,8 @@ TagManager:
   - PowerUpSpawner
   - PlayerCharacter
   - SpeedUp
+  - Shield
+  - PowerUpShield
   layers:
   - Default
   - TransparentFX

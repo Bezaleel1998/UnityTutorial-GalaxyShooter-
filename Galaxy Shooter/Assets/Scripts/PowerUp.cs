@@ -22,9 +22,11 @@ public class PowerUp : MonoBehaviour
     [SerializeField] private float _activeTimeTripleShoot = 5f;
 
     [Header("Powerup SpeedUp Variable")]
-    [SerializeField] private float _activeTimeSpeedUp = 4f;
+    [SerializeField] private float _activeTimeSpeedUp = 5f;
     [SerializeField] private float _speedMultiplier = 2f;
 
+    [Header("Shield Barrier Variable")]
+    [SerializeField] private float _shieldActiveTime = 5f;
 
     void Update()
     {
@@ -80,6 +82,7 @@ public class PowerUp : MonoBehaviour
 
                 case 2:
 
+                    playerScript.ShieldActive(_shieldActiveTime);
                     Debug.Log("Shield activated");
 
                     break;
