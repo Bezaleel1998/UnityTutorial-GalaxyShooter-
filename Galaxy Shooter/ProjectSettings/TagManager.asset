@@ -10,6 +10,8 @@ TagManager:
   - GameManager
   - TripleShoot
   - PowerUpSpawner
+  - PlayerCharacter
+  - SpeedUp
   layers:
   - Default
   - TransparentFX

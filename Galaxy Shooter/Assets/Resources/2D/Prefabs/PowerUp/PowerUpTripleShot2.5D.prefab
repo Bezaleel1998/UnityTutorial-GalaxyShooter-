@@ -128,11 +128,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _movementSpd: 3
-  _activeTime: 5
+  _powerUpID: 0
   _horizontalMin: -9.18
   _horizontalMax: 9.33
   _verticalMin: -3.9
   _verticalMax: 6
+  _activeTimeTripleShoot: 5
+  _activeTimeSpeedUp: 5
 --- !u!95 &252219741
 Animator:
   serializedVersion: 3

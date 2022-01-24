@@ -12,10 +12,11 @@ public class Player : MonoBehaviour
 
     [Header("Player Mechanic")]
     [SerializeField]
-    private float _speed = 5.0f;
+    private float _speed = 3.5f;
     [SerializeField] private GameObject _playerPrefab;
     [SerializeField] private SpawnManager _spManager;
     [SerializeField] private PowerUpSpawner _powerUpManager;
+    private Animator _player_animator;
 
     [Header("Player Movement")]
     private float _horizontalInput;
@@ -35,7 +36,11 @@ public class Player : MonoBehaviour
     private float _attackDmg = 2f;
     private int _playerHP = 3;
     [SerializeField] private bool _isTripleShootEnabled = false;
+    [SerializeField] private bool _isSpeedUpEnabled = false;
     [SerializeField] private Vector3 bulletOffset = new Vector3(0, 1f, 0);
+
+    [Header("Other variable")]
+    [SerializeField] private GameManager gM;
 
     #endregion
 
@@ -59,12 +64,19 @@ public class Player : MonoBehaviour
 
         }
 
+        if (_player_animator == null)
+        {
+
+            _player_animator = GameObject.FindGameObjectWithTag("PlayerCharacter").GetComponent<Animator>();
+
+        }
+
     }
 
     void FixedUpdate()
     {
 
-        PlayerMovement();
+        IsPlayerDead();
 
     }
 
@@ -100,6 +112,11 @@ public class Player : MonoBehaviour
 
         _playerHP--;
 
+    }
+
+    private void IsPlayerDead()
+    {
+
         //if life is 0 then player destroyed
         if (_playerHP <= 0)
         {
@@ -110,18 +127,18 @@ public class Player : MonoBehaviour
             {
                 GameObject.Destroy(child.gameObject);
             }
-            Debug.Log("Player Destroyed");
             //communicated with spawn manager 
             //let them know to stop running
             _spManager.OnPlayerDead();
             _powerUpManager.OnPlayerDead();
             //pause the game
+            gM.PauseController();
 
         }
         else
         {
 
-            Debug.Log("Player Life = " + _playerHP);
+            PlayerMovement();
 
         }
 
@@ -134,8 +151,51 @@ public class Player : MonoBehaviour
         _verticalInput = Input.GetAxis("Vertical");
         //new Vector3(x, y, z) * horizontal input (-1 or 1) * speed of movement * real time
 
+        if (_horizontalInput > 0)
+        {
+
+            _player_animator.SetBool("TurnRight", true);
+
+        }
+        else if (_horizontalInput < 0)
+        {
+
+            _player_animator.SetBool("TurnLeft", true);
+
+        }
+        else
+        {
+            
+            _player_animator.SetBool("TurnRight", false);
+            _player_animator.SetBool("TurnLeft", false);
+
+        }
+
         Vector3 dir = new Vector3(_horizontalInput, _verticalInput, 0);
         this.transform.Translate(dir.normalized * _speed * Time.deltaTime);
+
+    }
+
+    public void SpeedPowerUpActivation(float speedMultiplier, float timeActivation)
+    {
+                
+        _isSpeedUpEnabled = true;
+        //increase _speed of the player
+        float normalSpeed = _speed;
+        _speed = _speed * speedMultiplier;
+
+        //set up the coroutine for timing of the ability
+        StartCoroutine(SpeedUpActivationTime(timeActivation, normalSpeed));
+
+    }
+
+    IEnumerator SpeedUpActivationTime(float activeTime, float normalSpeed)
+    {
+                
+        yield return new WaitForSeconds(activeTime);
+        _speed = normalSpeed;
+
+        _isSpeedUpEnabled = false;
 
     }
 
