@@ -5,7 +5,7 @@ using UnityEngine;
 public class PowerUpSpawner : MonoBehaviour
 {
     [Header("Enemy Spawner")]
-    [SerializeField] private GameObject _PowerUpPrefabs;
+    [SerializeField] private GameObject[] _PowerUpPrefabs;
     [SerializeField] private float _spawnDelay = 10f;
     private bool _stopSpawning = false;
 
@@ -32,9 +32,10 @@ public class PowerUpSpawner : MonoBehaviour
 
             float rdmHorizontal = Random.Range(_horizontalMin, _horizontalMax);
             Vector3 spawnPos = new Vector3(rdmHorizontal, _verticalMax, 0f);
-            
-            GameObject powerUpClone = Instantiate(_PowerUpPrefabs, spawnPos, Quaternion.identity, this.transform);
-            powerUpClone.transform.name = _PowerUpPrefabs.name + " " + i++;
+
+            int randomID = Random.Range(0, _PowerUpPrefabs.Length);
+            GameObject powerUpClone = Instantiate(_PowerUpPrefabs[randomID], spawnPos, Quaternion.identity, this.transform);
+            powerUpClone.transform.name = _PowerUpPrefabs[randomID].name + " " + i++;
 
             yield return new WaitForSeconds(Random.Range(3, _delay));
 

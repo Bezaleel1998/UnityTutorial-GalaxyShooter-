@@ -4,15 +4,43 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
+    public static bool _isGamePaused = false;
+
+
     void Update()
     {
-        
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+
+            PauseController();
+            //show the Pause Menu UI
+
+        }
+
     }
+
+    public void PauseController()
+    {
+
+        _isGamePaused = !_isGamePaused;
+        PauseGame();
+
+    }
+
+    void PauseGame()
+    {
+        
+        if (_isGamePaused)
+        {
+            Time.timeScale = 0f;
+        }
+        else
+        {
+            Time.timeScale = 1;
+        }
+
+    }
+
 }
