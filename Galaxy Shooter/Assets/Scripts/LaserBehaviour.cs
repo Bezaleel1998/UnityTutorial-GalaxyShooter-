@@ -12,16 +12,8 @@ public class LaserBehaviour : MonoBehaviour
     [SerializeField] private float _bulletHeight = 7f;
     [SerializeField] private float _damageAmnt = 1f;
     //[SerializeField] private float _selfDestructTime = 2f;
-    [SerializeField] private GameManager _gameManager;
 
     #endregion
-
-    private void Awake()
-    {
-
-        _gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
-
-    }
 
     public void SetDefault(float _dmg)
     {
@@ -60,10 +52,10 @@ public class LaserBehaviour : MonoBehaviour
         {
 
             //add player score
-            _gameManager.AddScore();
-            //Destroy enemy Game Object
+            //decrease life / HP from player
+            //if it's empty (HP) blow up animation followed by deleting enemy game object
+            //delete this gameobject
             Destroy(col.gameObject);
-            //Destroy us
             Destroy(this.gameObject);
 
         }

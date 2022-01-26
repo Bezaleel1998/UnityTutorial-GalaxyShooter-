@@ -18,18 +18,6 @@ public class EnemyBehaviour : MonoBehaviour
     [Header("Action Variable")]
     private int _enemyHP = 1;
 
-    [Header("Other Game Object")]
-    private GameManager _gm;
-    private Player player;
-
-    private void Awake()
-    {
-
-        _gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-
-    }
-
     private void FixedUpdate()
     {
 
@@ -46,12 +34,12 @@ public class EnemyBehaviour : MonoBehaviour
 
             //damage player
             //destroy us
-            //Player player = col.GetComponent<Player>();
+            
+            Player player = col.GetComponent<Player>();
 
-            if (player != null && _gm != null)
+            if (player != null)
             {
                 player.Damage();
-                _gm.AddScore();
             }
 
             Destroy(this.gameObject);
@@ -61,11 +49,12 @@ public class EnemyBehaviour : MonoBehaviour
         if (col.tag == "Shield")
         {
 
-           if (player != null && _gm != null)
+            Player player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+
+            if (player != null)
             {
 
                 player.ShieldHit();
-                _gm.AddScore();
 
             }
 

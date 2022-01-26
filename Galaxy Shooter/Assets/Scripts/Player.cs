@@ -121,14 +121,12 @@ public class Player : MonoBehaviour
         {
 
             Debug.Log("Player Has Been Destroyed");
-            gM.PlayerDeadIndicator();//this script include the activation of GameOver text
 
         }
         else
         {
 
             Debug.Log("Player Has " + _playerHP + " life(s) left...");
-            gM.PlayerLiveIndicator(_playerHP);
 
         }
 
@@ -143,16 +141,16 @@ public class Player : MonoBehaviour
 
             //Show GameOverUI
             //Destroy Player3D inside this code (this parent)
-            /*foreach (Transform child in this.transform)
+            foreach (Transform child in this.transform)
             {
                 GameObject.Destroy(child.gameObject);
-            }*/
-            GameObject playerChar = GameObject.FindGameObjectWithTag("PlayerCharacter");
-            Destroy(playerChar);
+            }
             //communicated with spawn manager 
             //let them know to stop running
             _spManager.OnPlayerDead();
             _powerUpManager.OnPlayerDead();
+            //pause the game
+            gM.PauseController();
 
         }
         else
