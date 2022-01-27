@@ -76,7 +76,7 @@ public class AsteroidBehaviour : MonoBehaviour
 
         }
 
-        if (col.tag == "Enemy")
+        /*if (col.tag == "Enemy")
         {
 
             //destroy enemy
@@ -85,7 +85,7 @@ public class AsteroidBehaviour : MonoBehaviour
             //destroy us
             Destroy(this.gameObject);
 
-        }
+        }*/
 
     }
 
