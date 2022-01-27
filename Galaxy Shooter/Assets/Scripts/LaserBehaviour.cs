@@ -62,7 +62,8 @@ public class LaserBehaviour : MonoBehaviour
             //add player score
             _gameManager.AddScore();
             //Destroy enemy Game Object
-            Destroy(col.gameObject);
+            EnemyBehaviour eB = col.GetComponent<EnemyBehaviour>();
+            eB.EnemyDestroyedAnimation();
             //Destroy us
             Destroy(this.gameObject);
 
@@ -72,8 +73,19 @@ public class LaserBehaviour : MonoBehaviour
         {
 
             //damage player
-            //if it's empty (HP) blow up animation followed by deleting player game object
-            //call GameOver UI
+            //destroyUs
+            //Destroy(this.gameObject);
+
+        }
+
+        if (col.tag == "Asteroid")
+        {
+            
+            //destroy Asteroid
+            AsteroidBehaviour aB = col.GetComponent<AsteroidBehaviour>();
+            aB.AsteroidDestroyed();
+            //DestroyUs
+            Destroy(this.gameObject);
 
         }
 

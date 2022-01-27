@@ -8,6 +8,7 @@ public class EnemyBehaviour : MonoBehaviour
     [Header("Enemy Mechanic")]
     [SerializeField]
     private float _speed = 4.0f;
+    private bool _isEnemyDead = false;
 
     [Header("Enemy Boundaries")]
     [SerializeField] private float _horizontalMin = -9.18f;
@@ -21,12 +22,18 @@ public class EnemyBehaviour : MonoBehaviour
     [Header("Other Game Object")]
     private GameManager _gm;
     private Player player;
+    private Animator _anim;
 
     private void Awake()
     {
 
         _gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        
+        if (_anim == null)
+        {
+            _anim = this.gameObject.GetComponent<Animator>();
+        }
 
     }
 
@@ -54,7 +61,7 @@ public class EnemyBehaviour : MonoBehaviour
                 _gm.AddScore();
             }
 
-            Destroy(this.gameObject);
+            EnemyDestroyedAnimation();
 
         }
 
@@ -70,23 +77,43 @@ public class EnemyBehaviour : MonoBehaviour
             }
 
             Debug.Log("Shield Destroyed");
-            Destroy(this.gameObject);
-
+            EnemyDestroyedAnimation();
+        
         }
 
     }
 
 
+    public void EnemyDestroyedAnimation()
+    {
+
+        _isEnemyDead = true;
+        this.GetComponent<BoxCollider>().enabled = false;
+        _anim.SetTrigger("EnemyDead");
+
+        if (this.transform.position.y < _verticalMin && _isEnemyDead == true)
+        {
+
+            Destroy(this.gameObject);
+
+        }
+
+        Destroy(this.gameObject, 2.30f);        
+
+    }
+
 
     private void EnemyMovement()
     {
 
+        //random transform position on x axis
         float rdmHorizontal = Random.Range(_horizontalMin, _horizontalMax);
+        //speed of moving down
         this.transform.Translate(Vector3.down.normalized * _speed * Time.deltaTime);
-
-        if (this.transform.position.y < _verticalMin)
+        //if trigger the border
+        if (this.transform.position.y < _verticalMin && _isEnemyDead == false)
         {
-
+            //set the position to the random horizontal and vertical
             this.transform.position = new Vector3(rdmHorizontal, _verticalMax, 0);
 
         }

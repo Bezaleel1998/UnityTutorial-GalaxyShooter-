@@ -14,6 +14,7 @@ TagManager:
   - SpeedUp
   - Shield
   - PowerUpShield
+  - Asteroid
   layers:
   - Default
   - TransparentFX

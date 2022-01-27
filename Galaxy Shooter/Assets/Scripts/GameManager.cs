@@ -38,6 +38,9 @@ public class GameManager : MonoBehaviour
 
         KeyboardController();
 
+        HighScore();
+
+
     }
 
     void KeyboardController()
@@ -93,18 +96,6 @@ public class GameManager : MonoBehaviour
 
         _playerScore += _points;
         Debug.Log("Player Score : " + _playerScore);
-
-        int _highScore = PlayerPrefs.GetInt("HighScore");
-        highscoreText.text = "HighScore = " + _highScore.ToString();
-
-        if (_playerScore > _highScore)
-        {
-
-            PlayerPrefs.SetInt("HighScore", _playerScore);
-            highscoreText.text = "HighScore = " + _highScore.ToString();
-
-        }
-
         ShowScore(_playerScore);
 
     }
@@ -113,6 +104,22 @@ public class GameManager : MonoBehaviour
     {
 
         scoreText.text = "Score : " + playerScore.ToString();
+
+    }
+
+    void HighScore()
+    {
+        
+        int _highScore = PlayerPrefs.GetInt("HighScore");
+        Debug.Log("HighScore = " + _highScore);
+
+        if (_playerScore >= _highScore)
+        {
+
+            PlayerPrefs.SetInt("HighScore", _playerScore);
+            highscoreText.text = "HighScore = " + _highScore.ToString();
+
+        }
 
     }
 

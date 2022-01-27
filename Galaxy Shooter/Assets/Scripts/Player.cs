@@ -43,6 +43,8 @@ public class Player : MonoBehaviour
     [Header("Other variable")]
     [SerializeField] private GameManager gM;
     [SerializeField] private GameObject _shieldGameObject;
+    [SerializeField] private GameObject[] _fireDamage;
+    [SerializeField] private GameObject _explosionPrefab;
 
     #endregion
 
@@ -117,19 +119,45 @@ public class Player : MonoBehaviour
 
         _playerHP--;
 
+        VisualDamageAnimation(_playerHP);
+        gM.PlayerLiveIndicator(_playerHP);
+
         if (_playerHP <= 0)
         {
 
             Debug.Log("Player Has Been Destroyed");
+            PlayerDestroyed();
             gM.PlayerDeadIndicator();//this script include the activation of GameOver text
 
         }
-        else
+
+    }
+
+    void VisualDamageAnimation(int playerLives)
+    {
+
+        switch (playerLives)
         {
+            case 0:
+                for (int i = 0; i < _fireDamage.Length; i++)
+                {
+                    _fireDamage[i].gameObject.SetActive(false);
+                }
+                break;
 
-            Debug.Log("Player Has " + _playerHP + " life(s) left...");
-            gM.PlayerLiveIndicator(_playerHP);
+            case 1:
+                for (int i = 0; i < _fireDamage.Length; i++)
+                {
+                    _fireDamage[i].gameObject.SetActive(true);
+                }
+                break;
 
+            case 2:
+                _fireDamage[0].gameObject.SetActive(true);
+                break;
+
+            default:
+                break;
         }
 
     }
@@ -143,10 +171,6 @@ public class Player : MonoBehaviour
 
             //Show GameOverUI
             //Destroy Player3D inside this code (this parent)
-            /*foreach (Transform child in this.transform)
-            {
-                GameObject.Destroy(child.gameObject);
-            }*/
             GameObject playerChar = GameObject.FindGameObjectWithTag("PlayerCharacter");
             Destroy(playerChar);
             //communicated with spawn manager 
@@ -161,6 +185,15 @@ public class Player : MonoBehaviour
             PlayerMovement();
 
         }
+
+    }
+
+    void PlayerDestroyed()
+    {
+
+        GameObject explosionClone = Instantiate(_explosionPrefab, this.transform.position, Quaternion.identity, this.transform);
+        Destroy(explosionClone.gameObject, 2.30f);
+        this.GetComponent<BoxCollider>().enabled = false;
 
     }
 

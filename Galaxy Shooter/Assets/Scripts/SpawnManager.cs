@@ -6,7 +6,8 @@ public class SpawnManager : MonoBehaviour
 {
 
     [Header("Enemy Spawner")]
-    [SerializeField] private GameObject _enemyPrefab;
+    [Tooltip("Enemy is 0 and Asteroid is 1")]
+    [SerializeField] private GameObject[] _enemyPrefab;
     [SerializeField] private float _spawnDelay = 5f;
     private bool _stopSpawning = false;
 
@@ -35,11 +36,21 @@ public class SpawnManager : MonoBehaviour
 
         while (_stopSpawning == false)
         {
-
+            //random spawning at horizontal (x) for enemy
             float rdmHorizontal = Random.Range(_horizontalMin, _horizontalMax);
             Vector3 spawnPos = new Vector3(rdmHorizontal, _verticalMax, 0f);
-            GameObject enemyClone = Instantiate(_enemyPrefab, spawnPos, Quaternion.identity, this.transform);
-            enemyClone.transform.name = _enemyPrefab.name + " " + i++;
+            
+            //enemy index 0 and asteroid index 1
+            GameObject enemyClone = Instantiate(_enemyPrefab[0], spawnPos, Quaternion.identity, this.transform);
+            enemyClone.transform.name = _enemyPrefab[0].name + " " + i++;
+            
+            //random spawning at horizontal (x) for asteroid
+            float randomAsteroidPos = Random.Range(_horizontalMin, _horizontalMax);
+            Vector3 asteroidSpawnPos = new Vector3(randomAsteroidPos, _verticalMax, 0f);
+            //enemy index 0 and asteroid index 1
+            GameObject asteroidClone = Instantiate(_enemyPrefab[1], asteroidSpawnPos, Quaternion.identity, this.transform);
+            asteroidClone.transform.name = _enemyPrefab[1].name + " " + i++;
+
             yield return new WaitForSeconds(_delay);
 
         }
