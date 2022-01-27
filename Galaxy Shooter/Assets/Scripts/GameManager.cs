@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,8 +12,6 @@ public class GameManager : MonoBehaviour
     private int _playerScore = 0;
     [SerializeField] private int _points = 10;
     [SerializeField] private Sprite[] _liveSprites;
-    [SerializeField] private string sceneName;
-    private bool _isGameOver = false;
 
     [Header("UI Element")]
     public GameObject mainGameContainer;
@@ -51,13 +48,6 @@ public class GameManager : MonoBehaviour
 
             PauseController();
             //show the Pause Menu UI
-
-        }
-
-        if (Input.GetKeyDown(KeyCode.R) && _isGameOver == true)
-        {
-
-            LoadSceneFunction(sceneName);
 
         }
 
@@ -129,18 +119,14 @@ public class GameManager : MonoBehaviour
 
     public void PlayerDeadIndicator()
     {
-
         //when player dead 
         //show the lives display to 0
         livesDisplay.sprite = _liveSprites[0];
         //show gameover panel
         gameOverContainer.SetActive(true);
-
-        _isGameOver = true;
-
         StartCoroutine(GameOverTextAnimation());
         //pause the game
-        
+
     }
 
     IEnumerator GameOverTextAnimation()
@@ -158,19 +144,7 @@ public class GameManager : MonoBehaviour
     public void PlayerLiveIndicator(int playerHp)
     {
 
-        _isGameOver = false;
         livesDisplay.sprite = _liveSprites[playerHp];
-
-    }
-
-    #endregion
-
-    #region LoadScenes
-
-    public void LoadSceneFunction(string name)
-    {
-
-        SceneManager.LoadScene(name);
 
     }
 
