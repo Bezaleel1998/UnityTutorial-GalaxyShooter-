@@ -46,6 +46,11 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject[] _fireDamage;
     [SerializeField] private GameObject _explosionPrefab;
 
+    [Header("Sound Effect")]
+    [SerializeField] private AudioClip _laserSFX;
+    [SerializeField] private AudioClip _explosionSFX;
+
+
     #endregion
 
     private void Awake()
@@ -77,20 +82,13 @@ public class Player : MonoBehaviour
 
         }
 
+
     }
 
     void FixedUpdate()
     {
 
         IsPlayerDead();
-
-    }
-
-    void Update()
-    {
-
-        PlayerAttack();
-        ShieldStatus();
 
     }
 
@@ -125,11 +123,19 @@ public class Player : MonoBehaviour
         if (_playerHP <= 0)
         {
 
+            ExplosionSFX();
             Debug.Log("Player Has Been Destroyed");
             PlayerDestroyed();
             gM.PlayerDeadIndicator();//this script include the activation of GameOver text
 
         }
+
+    }
+
+    void ExplosionSFX()
+    {
+
+        AudioSource.PlayClipAtPoint(_explosionSFX, this.transform.position, 1f);
 
     }
 
@@ -183,6 +189,8 @@ public class Player : MonoBehaviour
         {
 
             PlayerMovement();
+            PlayerAttack();
+            ShieldStatus();
 
         }
 
@@ -280,8 +288,17 @@ public class Player : MonoBehaviour
                 FireLaser(_bulletPrefab[0], _parentBullet, _attackDmg);
 
             }
+
+            LaserSFX();
             
         }
+
+    }
+
+    void LaserSFX()
+    {
+
+        AudioSource.PlayClipAtPoint(_laserSFX, this.transform.position, 1f);
 
     }
 

@@ -24,6 +24,10 @@ public class EnemyBehaviour : MonoBehaviour
     private Player player;
     private Animator _anim;
 
+    [Header("Sound Effect")]
+    //[SerializeField] private AudioClip _laserSFX;
+    [SerializeField] private AudioClip _explosionSFX;
+
     private void Awake()
     {
 
@@ -34,7 +38,7 @@ public class EnemyBehaviour : MonoBehaviour
         {
             _anim = this.gameObject.GetComponent<Animator>();
         }
-
+                
     }
 
     private void FixedUpdate()
@@ -88,6 +92,8 @@ public class EnemyBehaviour : MonoBehaviour
     {
 
         _isEnemyDead = true;
+        ExplosionSFX();
+
         this.GetComponent<BoxCollider>().enabled = false;
         _anim.SetTrigger("EnemyDead");
 
@@ -99,6 +105,13 @@ public class EnemyBehaviour : MonoBehaviour
         }
 
         Destroy(this.gameObject, 2.30f);        
+
+    }
+
+    void ExplosionSFX()
+    {
+
+        AudioSource.PlayClipAtPoint(_explosionSFX, this.transform.position, 1f);
 
     }
 

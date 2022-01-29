@@ -28,6 +28,9 @@ public class PowerUp : MonoBehaviour
     [Header("Shield Barrier Variable")]
     [SerializeField] private float _shieldActiveTime = 5f;
 
+    [Header ("Sound Effect")]
+    [SerializeField] private AudioClip _powerupSFX;
+
     void Update()
     {
 
@@ -63,6 +66,8 @@ public class PowerUp : MonoBehaviour
 
             Player playerScript = col.GetComponent<Player>();
 
+            PowerUpSFX();
+
             switch (_powerUpID)
             {
 
@@ -95,6 +100,13 @@ public class PowerUp : MonoBehaviour
             Destroy(this.gameObject);
 
         }
+
+    }
+
+    void PowerUpSFX()
+    {
+
+        AudioSource.PlayClipAtPoint(_powerupSFX, this.transform.position, 1f);
 
     }
 

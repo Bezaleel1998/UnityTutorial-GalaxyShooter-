@@ -22,6 +22,9 @@ public class AsteroidBehaviour : MonoBehaviour
     [SerializeField] private float _verticalMin = -4f;
     [SerializeField] private float _verticalMax = 6.5f;
 
+    [Header("Sound Effect")]
+    [SerializeField] private AudioClip _explosionSFX;
+
     void Awake()
     {
 
@@ -29,6 +32,7 @@ public class AsteroidBehaviour : MonoBehaviour
         _player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
 
         _rotationSpeed = Random.Range(-22f, 22f);
+
 
     }
 
@@ -63,6 +67,7 @@ public class AsteroidBehaviour : MonoBehaviour
         if (col.tag == "Player")
         {
 
+            ExplosionSFX();
             _player.Damage();
             AsteroidDestroyed();
 
@@ -71,9 +76,16 @@ public class AsteroidBehaviour : MonoBehaviour
         if (col.tag == "Shield")
         {
 
+            ExplosionSFX();
             _player.ShieldHit();
             AsteroidDestroyed();
 
+        }
+
+        if (col.tag == "Laser")
+        {
+
+            ExplosionSFX();
         }
 
         /*if (col.tag == "Enemy")
@@ -86,6 +98,13 @@ public class AsteroidBehaviour : MonoBehaviour
             Destroy(this.gameObject);
 
         }*/
+
+    }
+
+    void ExplosionSFX()
+    {
+
+        AudioSource.PlayClipAtPoint(_explosionSFX, this.transform.position, 1f);
 
     }
 

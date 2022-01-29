@@ -132,3 +132,5 @@ MonoBehaviour:
   _horizontalMax: 9.33
   _verticalMin: -4
   _verticalMax: 6.5
+  _explosionSFX: {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
+  _sfxAudioSource: {fileID: 0}

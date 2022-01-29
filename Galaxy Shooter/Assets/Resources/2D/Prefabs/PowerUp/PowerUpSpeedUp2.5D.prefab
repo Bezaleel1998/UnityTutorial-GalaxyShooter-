@@ -136,6 +136,9 @@ MonoBehaviour:
   _activeTimeTripleShoot: 5
   _activeTimeSpeedUp: 5
   _speedMultiplier: 2
+  _shieldActiveTime: 5
+  _powerupSFX: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
+  _sfxAudioSource: {fileID: 0}
 --- !u!95 &4111271436863434200
 Animator:
   serializedVersion: 3
