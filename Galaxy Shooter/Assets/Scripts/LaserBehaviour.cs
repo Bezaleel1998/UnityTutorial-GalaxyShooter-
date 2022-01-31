@@ -13,6 +13,11 @@ public class LaserBehaviour : MonoBehaviour
     [SerializeField] private float _damageAmnt = 1f;
     //[SerializeField] private float _selfDestructTime = 2f;
     [SerializeField] private GameManager _gameManager;
+    private bool _fromPlayer;
+
+    [Header("Game Object")]
+    [SerializeField]
+    private Player _playerScript;
 
     #endregion
 
@@ -20,6 +25,7 @@ public class LaserBehaviour : MonoBehaviour
     {
 
         _gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        _playerScript = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
 
     }
 
@@ -72,9 +78,28 @@ public class LaserBehaviour : MonoBehaviour
         if (col.tag == "Player")
         {
 
-            //damage player
-            //destroyUs
-            //Destroy(this.gameObject);
+            if (!_fromPlayer)
+            {
+
+                //damage player
+                _playerScript.Damage();
+                //destroyUs
+                Destroy(this.gameObject);
+
+            }
+
+        }
+
+        if (col.tag == "Shield")
+        {
+
+            if (!_fromPlayer)
+            {
+
+                //Hit Shield
+                _playerScript.ShieldHit();
+
+            }
 
         }
 
@@ -88,6 +113,13 @@ public class LaserBehaviour : MonoBehaviour
             Destroy(this.gameObject);
 
         }
+
+    }
+
+    public bool _isLaserFromPlayer(bool _isTrue)
+    {
+
+        return _fromPlayer = _isTrue;
 
     }
 

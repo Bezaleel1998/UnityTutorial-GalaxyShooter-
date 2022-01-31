@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.CrossPlatformInput;
 
 public class Player : MonoBehaviour
 {
@@ -87,9 +88,7 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
-
         IsPlayerDead();
-
     }
 
     private void LateUpdate()
@@ -112,25 +111,7 @@ public class Player : MonoBehaviour
 
     }
 
-    public void Damage()
-    {
-
-        _playerHP--;
-
-        VisualDamageAnimation(_playerHP);
-        gM.PlayerLiveIndicator(_playerHP);
-
-        if (_playerHP <= 0)
-        {
-
-            ExplosionSFX();
-            Debug.Log("Player Has Been Destroyed");
-            PlayerDestroyed();
-            gM.PlayerDeadIndicator();//this script include the activation of GameOver text
-
-        }
-
-    }
+    #region Visual and Sound Effect
 
     void ExplosionSFX()
     {
@@ -164,6 +145,30 @@ public class Player : MonoBehaviour
 
             default:
                 break;
+        }
+
+    }
+
+    #endregion
+
+    #region PlayerLives
+
+    public void Damage()
+    {
+
+        _playerHP--;
+
+        VisualDamageAnimation(_playerHP);
+        gM.PlayerLiveIndicator(_playerHP);
+
+        if (_playerHP <= 0)
+        {
+
+            ExplosionSFX();
+            Debug.Log("Player Has Been Destroyed");
+            PlayerDestroyed();
+            gM.PlayerDeadIndicator();//this script include the activation of GameOver text
+
         }
 
     }
@@ -205,11 +210,15 @@ public class Player : MonoBehaviour
 
     }
 
+    #endregion
+
+    #region PlayerMovement
+
     void PlayerMovement()
     {
 
-        _horizontalInput = Input.GetAxis("Horizontal");
-        _verticalInput = Input.GetAxis("Vertical");
+        RuntimePlatformDetection();
+
         //new Vector3(x, y, z) * horizontal input (-1 or 1) * speed of movement * real time
 
         if (_horizontalInput > 0)
@@ -226,7 +235,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            
+
             _player_animator.SetBool("TurnRight", false);
             _player_animator.SetBool("TurnLeft", false);
 
@@ -237,9 +246,41 @@ public class Player : MonoBehaviour
 
     }
 
+
+    void RuntimePlatformDetection()
+    {
+
+        //detect if this is mobile or desktop application
+#if UNITY_ANDROID
+        AndroidMovement();
+#elif UNITY_STANDALONE_WIN
+        DesktopMovement();
+#endif
+
+        Debug.Log("<color=lime>Horizontal Input Position = " + _horizontalInput +"</color>");
+        Debug.Log("<color=lime>Vertical Input Position = " + _verticalInput + "</color>");
+
+    }
+
+    void DesktopMovement()
+    {
+
+        _horizontalInput = Input.GetAxis("Horizontal");
+        _verticalInput = Input.GetAxis("Vertical");
+
+    }
+
+    void AndroidMovement()
+    {
+
+        _horizontalInput = CrossPlatformInputManager.GetAxis("Horizontal");
+        _verticalInput = CrossPlatformInputManager.GetAxis("Vertical");
+
+    }
+
     public void SpeedPowerUpActivation(float speedMultiplier, float timeActivation)
     {
-                
+
         _isSpeedUpEnabled = true;
         //increase _speed of the player
         float normalSpeed = _speed;
@@ -252,7 +293,7 @@ public class Player : MonoBehaviour
 
     IEnumerator SpeedUpActivationTime(float activeTime, float normalSpeed)
     {
-                
+
         yield return new WaitForSeconds(activeTime);
         _speed = normalSpeed;
 
@@ -262,36 +303,58 @@ public class Player : MonoBehaviour
 
     #endregion
 
+    #endregion
+
     #region PlayerAttackCode
 
     void PlayerAttack()
     {
-        
+
         //GetKeyDown is for once at a time
         //GetKey is for holding the button
-        if (Input.GetKey(KeyCode.Space) && Time.time > _canFire)
+
+#if UNITY_ANDROID
+        if (CrossPlatformInputManager.GetButton("Fire") && Time.time > _canFire)
         {
 
             //for fire rate / cooldown system
             _canFire = Time.time + _fireRate;
 
-            if (_isTripleShootEnabled == true)
-            {
+            ShootCommence();
 
-                //index 1 for triple shoot laser
-                TripleShootLaserFire(_bulletPrefab[1], _parentBullet, _attackDmg);
-
-            }
-            else
-            {
-                //index 0 for normal shoot laser
-                FireLaser(_bulletPrefab[0], _parentBullet, _attackDmg);
-
-            }
-
-            LaserSFX();
-            
         }
+#elif UNITY_STANDALONE_WIN
+        if ((Input.GetKey(KeyCode.Space) || CrossPlatformInputManager.GetButton("Fire")) && Time.time > _canFire)
+        {
+
+            //for fire rate / cooldown system
+            _canFire = Time.time + _fireRate;
+
+            ShootCommence();
+
+        }
+#endif
+
+    }
+
+    void ShootCommence()
+    {
+
+        if (_isTripleShootEnabled == true)
+        {
+
+            //index 1 for triple shoot laser
+            TripleShootLaserFire(_bulletPrefab[1], _parentBullet, _attackDmg);
+
+        }
+        else
+        {
+            //index 0 for normal shoot laser
+            FireLaser(_bulletPrefab[0], _parentBullet, _attackDmg);
+
+        }
+
+        LaserSFX();
 
     }
 
@@ -311,6 +374,9 @@ public class Player : MonoBehaviour
         //set the attack damage
         clonePrefabs.GetComponent<LaserBehaviour>().SetDefault(_dmg);
 
+        //set _fromplayer as true
+        clonePrefabs.GetComponent<LaserBehaviour>()._isLaserFromPlayer(true);
+
     }
 
     void TripleShootLaserFire(GameObject triplePrefabs, GameObject parent, float _dmg)
@@ -320,7 +386,7 @@ public class Player : MonoBehaviour
         GameObject clonePrefabs = Instantiate(triplePrefabs, transform.position + bulletOffset, Quaternion.identity, parent.transform);
 
         //set the attack damage
-        clonePrefabs.GetComponent<TripleshootBehaviour>().SetAllChildAttackDamage(_dmg);
+        clonePrefabs.GetComponent<TripleshootBehaviour>().SetAllChildAttackDamage(_dmg, true);
 
     }
 

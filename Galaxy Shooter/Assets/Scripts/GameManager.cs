@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityStandardAssets.CrossPlatformInput;
 
 public class GameManager : MonoBehaviour
 {
@@ -23,6 +24,7 @@ public class GameManager : MonoBehaviour
     public Text highscoreText;
     public Text scoreText;
     public Image livesDisplay;
+    public Text restartcomment;
 
     private void Awake()
     {
@@ -36,10 +38,28 @@ public class GameManager : MonoBehaviour
     void Update()
     {
 
+#if UNITY_ANDROID
+        AndroidController();
+        restartcomment.text = "Press 'Fire' Button to Restart Game";
+#elif UNITY_STANDALONE_WIN
         KeyboardController();
+        restartcomment.text = "Press 'R' to Restart Game";
+#endif
 
         HighScore();
 
+    }
+
+
+    void AndroidController()
+    {
+
+        if (CrossPlatformInputManager.GetButton("Fire") && _isGameOver == true)
+        {
+
+            LoadSceneFunction(sceneName);
+        
+        }
 
     }
 
@@ -63,7 +83,7 @@ public class GameManager : MonoBehaviour
 
     }
 
-    #region PauseMechanic
+#region PauseMechanic
 
     public void PauseController()
     {
@@ -87,9 +107,9 @@ public class GameManager : MonoBehaviour
 
     }
 
-    #endregion
+#endregion
 
-    #region ScoringSystem
+#region ScoringSystem
 
     public void AddScore()
     {
@@ -123,9 +143,9 @@ public class GameManager : MonoBehaviour
 
     }
 
-    #endregion
+#endregion
 
-    #region PlayerLiveIndicator
+#region PlayerLiveIndicator
 
     public void PlayerDeadIndicator()
     {
@@ -163,9 +183,9 @@ public class GameManager : MonoBehaviour
 
     }
 
-    #endregion
+#endregion
 
-    #region LoadScenes
+#region LoadScenes
 
     public void LoadSceneFunction(string name)
     {
@@ -174,6 +194,6 @@ public class GameManager : MonoBehaviour
 
     }
 
-    #endregion
+#endregion
 
 }

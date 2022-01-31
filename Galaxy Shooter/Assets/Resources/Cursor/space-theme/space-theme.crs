@@ -1,0 +1,51 @@
+﻿[Arrow]
+Path=Normal Select Space.ani
+
+[AppStarting]
+Path=Working in Backround Space.ani
+
+[Wait]
+Path=Space theme Busy.ani
+
+[Crosshair]
+Path=Space Theme Persicion Select.ani
+
+[IBeam]
+Path=Space Theme Text Select.ani
+
+[NWPen]
+Path=Handwriting space theme.ani
+
+[No]
+Path=space theme unavailable.ani
+
+[SizeNS]
+Path=space theme Vertical Resize.ani
+
+[SizeWE]
+Path=space theme horizontal Resize.ani
+
+[SizeNWSE]
+Path=space theme Diagonal Resize 1.ani
+
+[SizeNESW]
+Path=space theme Diagonal Resize 2.ani
+
+[SizeAll]
+Path=space theme Move.ani
+
+[UpArrow]
+Path=space theme alternate select [meteor].ani
+
+[Hand]
+Path=space theme Link Select.ani
+
+[Pin]
+Path=space theme Location Select.ani
+
+[Person]
+Path=space theme person Select.ani
+
+[Help]
+Path=space theme help select.ani
+

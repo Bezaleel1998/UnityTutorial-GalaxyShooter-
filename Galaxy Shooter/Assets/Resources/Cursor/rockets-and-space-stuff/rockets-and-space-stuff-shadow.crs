@@ -1,0 +1,12 @@
+﻿[Arrow]
+Path=rocket.cur
+
+[SizeNESW]
+Path=satellite.cur
+
+[SizeNWSE]
+Path=satellite2.cur
+
+[No]
+Path=out of fuel (unavalible).ani
+
