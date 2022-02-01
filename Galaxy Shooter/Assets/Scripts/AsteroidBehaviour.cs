@@ -56,6 +56,7 @@ public class AsteroidBehaviour : MonoBehaviour
     {
 
         GameObject asteroidClone = Instantiate(_explosionPrefab, this.transform.position, Quaternion.identity);
+        this.GetComponent<SphereCollider>().enabled = false;
         Destroy(this.gameObject);
         Destroy(asteroidClone.gameObject, 2.30f);
         
@@ -81,23 +82,6 @@ public class AsteroidBehaviour : MonoBehaviour
             AsteroidDestroyed();
 
         }
-
-        if (col.tag == "Laser")
-        {
-
-            ExplosionSFX();
-        }
-
-        /*if (col.tag == "Enemy")
-        {
-
-            //destroy enemy
-            EnemyBehaviour eB = col.GetComponent<EnemyBehaviour>();
-            eB.EnemyDestroyedAnimation();
-            //destroy us
-            Destroy(this.gameObject);
-
-        }*/
 
     }
 

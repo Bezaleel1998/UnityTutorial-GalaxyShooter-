@@ -15,6 +15,7 @@ TagManager:
   - Shield
   - PowerUpShield
   - Asteroid
+  - BulletClone
   layers:
   - Default
   - TransparentFX

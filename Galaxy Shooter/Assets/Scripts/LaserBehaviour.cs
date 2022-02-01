@@ -9,11 +9,16 @@ public class LaserBehaviour : MonoBehaviour
 
     [Header("Laser Mechanic")]
     [SerializeField] private float _bulletSpeed = 8f;
-    [SerializeField] private float _bulletHeight = 7f;
     [SerializeField] private float _damageAmnt = 1f;
-    //[SerializeField] private float _selfDestructTime = 2f;
+    [SerializeField] private float _selfDestructTime = 2f;
     [SerializeField] private GameManager _gameManager;
     private bool _fromPlayer;
+
+    [Header("Laser Boundaries")]
+    [SerializeField] private float _horizontalMin = -9.18f;
+    [SerializeField] private float _horizontalMax = 9.33f;
+    [SerializeField] private float _verticalMin = -7f;
+    [SerializeField] private float _verticalMax = 7f;
 
     [Header("Game Object")]
     [SerializeField]
@@ -48,13 +53,27 @@ public class LaserBehaviour : MonoBehaviour
 
         this.transform.Translate(Vector3.up.normalized * _bulletSpeed * Time.deltaTime);
 
-        if (this.transform.position.y > _bulletHeight)
+        if (_fromPlayer)
         {
-            Destroy(this.gameObject);
+
+            if (this.transform.position.y > _verticalMax)
+            {
+                Destroy(this.gameObject);
+            }
+
+        }
+        else
+        {
+
+            if (this.transform.position.y < _verticalMin)
+            {
+                Destroy(this.gameObject);
+            }
+
         }
 
         //self destruct after amount of time
-        //Destroy(clonePrefabs, _selfDestructTime);
+        //Destroy(this, _selfDestructTime);
 
     }
 
@@ -65,13 +84,18 @@ public class LaserBehaviour : MonoBehaviour
         if (col.tag == "Enemy")
         {
 
-            //add player score
-            _gameManager.AddScore();
-            //Destroy enemy Game Object
-            EnemyBehaviour eB = col.GetComponent<EnemyBehaviour>();
-            eB.EnemyDestroyedAnimation();
-            //Destroy us
-            Destroy(this.gameObject);
+            if (_fromPlayer)
+            {
+
+                //add player score
+                _gameManager.AddScore(10);
+                //Destroy enemy Game Object
+                EnemyBehaviour eB = col.GetComponent<EnemyBehaviour>();
+                eB.EnemyDestroyedAnimation();
+                //Destroy us
+                Destroy(this.gameObject);
+
+            }
 
         }
 
@@ -105,12 +129,18 @@ public class LaserBehaviour : MonoBehaviour
 
         if (col.tag == "Asteroid")
         {
-            
-            //destroy Asteroid
-            AsteroidBehaviour aB = col.GetComponent<AsteroidBehaviour>();
-            aB.AsteroidDestroyed();
-            //DestroyUs
-            Destroy(this.gameObject);
+
+            if (_fromPlayer)
+            {
+
+                _gameManager.AddScore(20);
+                //destroy Asteroid
+                AsteroidBehaviour aB = col.GetComponent<AsteroidBehaviour>();
+                aB.AsteroidDestroyed();
+                //DestroyUs
+                Destroy(this.gameObject);
+
+            }
 
         }
 

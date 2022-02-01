@@ -17,15 +17,21 @@ public class EnemyBehaviour : MonoBehaviour
     [SerializeField] private float _verticalMax = 6.5f;
 
     [Header("Action Variable")]
-    private int _enemyHP = 1;
+    //private int _enemyHP = 1;
+    [SerializeField] private Vector3 bulletOffset = new Vector3(0, 1, 0);
+    //private float _enemyDmg;
+    [SerializeField] private float _fireRate;
+    private float _canFire = -1f;
 
     [Header("Other Game Object")]
     private GameManager _gm;
     private Player player;
     private Animator _anim;
+    [SerializeField] private GameObject _laserPrefab;
+    [SerializeField] private GameObject _parentLaser;
 
     [Header("Sound Effect")]
-    //[SerializeField] private AudioClip _laserSFX;
+    [SerializeField] private AudioClip _laserSFX;
     [SerializeField] private AudioClip _explosionSFX;
 
     private void Awake()
@@ -38,6 +44,13 @@ public class EnemyBehaviour : MonoBehaviour
         {
             _anim = this.gameObject.GetComponent<Animator>();
         }
+
+        if (_parentLaser == null)
+        {
+
+            _parentLaser = GameObject.FindGameObjectWithTag("BulletClone").gameObject;
+
+        }
                 
     }
 
@@ -45,6 +58,7 @@ public class EnemyBehaviour : MonoBehaviour
     {
 
         EnemyMovement();
+        EnemyAttack();
 
     }
 
@@ -62,7 +76,7 @@ public class EnemyBehaviour : MonoBehaviour
             if (player != null && _gm != null)
             {
                 player.Damage();
-                _gm.AddScore();
+                _gm.AddScore(10);
             }
 
             EnemyDestroyedAnimation();
@@ -76,7 +90,7 @@ public class EnemyBehaviour : MonoBehaviour
             {
 
                 player.ShieldHit();
-                _gm.AddScore();
+                _gm.AddScore(10);
 
             }
 
@@ -130,6 +144,31 @@ public class EnemyBehaviour : MonoBehaviour
             this.transform.position = new Vector3(rdmHorizontal, _verticalMax, 0);
 
         }
+
+    }
+
+
+    private void EnemyAttack()
+    {
+
+        if (Time.time > _canFire && _isEnemyDead == false)
+        {
+
+            _fireRate = Random.Range(3f, 7f);
+            _canFire = Time.time + _fireRate;
+            GameObject clonePrefabs = Instantiate(_laserPrefab, transform.position + bulletOffset, Quaternion.Euler(180, 0, 0), _parentLaser.transform);
+            clonePrefabs.GetComponent<LaserBehaviour>()._isLaserFromPlayer(false);
+            clonePrefabs.name = "EnemyLaser";
+            LaserSFX();
+
+        }
+                
+    }
+
+    void LaserSFX()
+    {
+
+        AudioSource.PlayClipAtPoint(_laserSFX, this.transform.position, 1f);
 
     }
 

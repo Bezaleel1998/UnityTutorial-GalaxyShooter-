@@ -12,7 +12,9 @@ public class GameManager : MonoBehaviour
 
     [Header("Private Variable")]
     private int _playerScore = 0;
-    [SerializeField] private int _points = 10;
+    //10 additional point for kill enemy 
+    //20 additional point for hit asteroid
+    [SerializeField] private int _points;
     [SerializeField] private Sprite[] _liveSprites;
     [SerializeField] private string sceneName;
     private bool _isGameOver = false;
@@ -20,6 +22,8 @@ public class GameManager : MonoBehaviour
     [Header("UI Element")]
     public GameObject mainGameContainer;
     public GameObject gameOverContainer;
+    public GameObject quitGameContainer;
+    public GameObject pauseGameContainer;
     public Text gameOverText;
     public Text highscoreText;
     public Text scoreText;
@@ -89,6 +93,7 @@ public class GameManager : MonoBehaviour
     {
 
         _isGamePaused = !_isGamePaused;
+        pauseGameContainer.SetActive(_isGamePaused);
         PauseGame();
 
     }
@@ -111,9 +116,10 @@ public class GameManager : MonoBehaviour
 
 #region ScoringSystem
 
-    public void AddScore()
+    public void AddScore(int additionalScore)
     {
 
+        _points = additionalScore;
         _playerScore += _points;
         Debug.Log("Player Score : " + _playerScore);
         ShowScore(_playerScore);
@@ -191,6 +197,33 @@ public class GameManager : MonoBehaviour
     {
 
         SceneManager.LoadScene(name);
+
+    }
+
+    #endregion
+
+#region Pause Menu and Exit Popup
+
+    public void ShowPopUpQuitGame()
+    {
+
+        pauseGameContainer.SetActive(false);
+        quitGameContainer.SetActive(true);
+
+    }
+
+    public void CancelQuit()
+    {
+
+        pauseGameContainer.SetActive(true);
+        quitGameContainer.SetActive(false);
+
+    }
+
+    public void ExitGame()
+    {
+
+        Application.Quit();
 
     }
 

@@ -257,8 +257,8 @@ public class Player : MonoBehaviour
         DesktopMovement();
 #endif
 
-        Debug.Log("<color=lime>Horizontal Input Position = " + _horizontalInput +"</color>");
-        Debug.Log("<color=lime>Vertical Input Position = " + _verticalInput + "</color>");
+        //Debug.Log("<color=lime>Horizontal Input Position = " + _horizontalInput +"</color>");
+        //Debug.Log("<color=lime>Vertical Input Position = " + _verticalInput + "</color>");
 
     }
 
@@ -324,7 +324,7 @@ public class Player : MonoBehaviour
 
         }
 #elif UNITY_STANDALONE_WIN
-        if ((Input.GetKey(KeyCode.Space) || CrossPlatformInputManager.GetButton("Fire")) && Time.time > _canFire)
+        if (Input.GetKey(KeyCode.Space) && Time.time > _canFire)
         {
 
             //for fire rate / cooldown system

@@ -61,8 +61,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _bulletSpeed: 10
-  _bulletHeight: 7
   _damageAmnt: 0
+  _selfDestructTime: 2
+  _gameManager: {fileID: 0}
+  _horizontalMin: -9.18
+  _horizontalMax: 9.33
+  _verticalMin: -7
+  _verticalMax: 7
+  _playerScript: {fileID: 0}
 --- !u!54 &8508407369396574779
 Rigidbody:
   m_ObjectHideFlags: 0
