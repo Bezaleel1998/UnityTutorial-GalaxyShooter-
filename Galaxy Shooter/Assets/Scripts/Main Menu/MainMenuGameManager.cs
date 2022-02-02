@@ -12,13 +12,17 @@ public class MainMenuGameManager : MonoBehaviour
     private Text _highscoreText;
 
     [Header("Variable")]
-    private float _highScore = 0;
+    private int _highScore = 0;
+    private int _coopHS = 0;
 
     private void Update()
     {
         
+        /// C# write to txt file newLine with \r\n
         _highScore = PlayerPrefs.GetInt("HighScore");
-        _highscoreText.text = "Highscore = " + _highScore.ToString();
+        _coopHS = PlayerPrefs.GetInt("Co-Op_HighScore");
+        _highscoreText.text = "<color=lime>Highscore = " + _highScore.ToString() + "</color>\r\n" +
+            "<color=blue>Co-Op Highscore = " + _coopHS.ToString() + "</color>";
 
     }
 
