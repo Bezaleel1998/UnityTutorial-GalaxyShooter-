@@ -1,2 +1,2 @@
 # UnityTutorial-GalaxyShooter-
- My Unity Game Project (Official Course)
+ My Unity Game Project (Official Course) (Game 01)
