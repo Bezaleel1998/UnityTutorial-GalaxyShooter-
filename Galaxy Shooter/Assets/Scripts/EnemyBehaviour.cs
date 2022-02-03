@@ -25,7 +25,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     [Header("Other Game Object")]
     private GameManager _gm;
-    private Player player;
+    //private Player player;
     private Animator _anim;
     [SerializeField] private GameObject _laserPrefab;
     [SerializeField] private GameObject _parentLaser;
@@ -38,7 +38,7 @@ public class EnemyBehaviour : MonoBehaviour
     {
 
         _gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        //player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         
         if (_anim == null)
         {
@@ -72,12 +72,18 @@ public class EnemyBehaviour : MonoBehaviour
             //damage player
             //destroy us
             //Player player = col.GetComponent<Player>();
+            col.GetComponent<Player>().Damage();
+            _gm.AddScore(10);
 
-            if (player != null && _gm != null)
-            {
-                player.Damage();
-                _gm.AddScore(10);
-            }
+            EnemyDestroyedAnimation();
+
+        }
+
+        if (col.tag == "Player2")
+        {
+
+            col.GetComponent<Player>().Damage();
+            _gm.AddScore(10);
 
             EnemyDestroyedAnimation();
 
@@ -86,14 +92,8 @@ public class EnemyBehaviour : MonoBehaviour
         if (col.tag == "Shield")
         {
 
-           if (player != null && _gm != null)
-            {
-
-                player.ShieldHit();
-                _gm.AddScore(10);
-
-            }
-
+            _gm.AddScore(10);
+            col.transform.parent.GetComponent<Player>().ShieldHit();
             Debug.Log("Shield Destroyed");
             EnemyDestroyedAnimation();
         

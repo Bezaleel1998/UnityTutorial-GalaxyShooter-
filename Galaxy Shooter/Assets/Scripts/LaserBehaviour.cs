@@ -10,7 +10,7 @@ public class LaserBehaviour : MonoBehaviour
     [Header("Laser Mechanic")]
     [SerializeField] private float _bulletSpeed = 8f;
     [SerializeField] private float _damageAmnt = 1f;
-    [SerializeField] private float _selfDestructTime = 2f;
+    //[SerializeField] private float _selfDestructTime = 2f;
     [SerializeField] private GameManager _gameManager;
     private bool _fromPlayer;
 
@@ -20,9 +20,9 @@ public class LaserBehaviour : MonoBehaviour
     [SerializeField] private float _verticalMin = -7f;
     [SerializeField] private float _verticalMax = 7f;
 
-    [Header("Game Object")]
+    /*[Header("Game Object")]
     [SerializeField]
-    private Player _playerScript;
+    private Player _playerScript;*/
 
     #endregion
 
@@ -30,7 +30,7 @@ public class LaserBehaviour : MonoBehaviour
     {
 
         _gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
-        _playerScript = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        //_playerScript = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
 
     }
 
@@ -106,7 +106,22 @@ public class LaserBehaviour : MonoBehaviour
             {
 
                 //damage player
-                _playerScript.Damage();
+                col.GetComponent<Player>().Damage();
+                //destroyUs
+                Destroy(this.gameObject);
+
+            }
+
+        }
+
+        if (col.tag == "Player2")
+        {
+
+            if (!_fromPlayer)
+            {
+
+                //damage player
+                col.GetComponent<Player>().Damage();
                 //destroyUs
                 Destroy(this.gameObject);
 
@@ -120,8 +135,8 @@ public class LaserBehaviour : MonoBehaviour
             if (!_fromPlayer)
             {
 
-                //Hit Shield
-                _playerScript.ShieldHit();
+                col.transform.parent.GetComponent<Player>().ShieldHit();
+                Destroy(this.gameObject);
 
             }
 
@@ -137,6 +152,7 @@ public class LaserBehaviour : MonoBehaviour
                 //destroy Asteroid
                 AsteroidBehaviour aB = col.GetComponent<AsteroidBehaviour>();
                 aB.AsteroidDestroyed();
+                aB.ExplosionSFX();
                 //DestroyUs
                 Destroy(this.gameObject);
 

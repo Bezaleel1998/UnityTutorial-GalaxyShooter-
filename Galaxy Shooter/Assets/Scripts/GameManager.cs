@@ -8,16 +8,22 @@ using UnityStandardAssets.CrossPlatformInput;
 public class GameManager : MonoBehaviour
 {
 
+    [Header("Public Variable")]
+    public bool _isGameOver = false;
+    public bool _isCoOp_Mode = false;
     public static bool _isGamePaused = false;
 
     [Header("Private Variable")]
-    private int _playerScore = 0;
     //10 additional point for kill enemy 
     //20 additional point for hit asteroid
     [SerializeField] private int _points;
     [SerializeField] private Sprite[] _liveSprites;
     [SerializeField] private string sceneName;
-    private bool _isGameOver = false;
+    private int _playerScore = 0;
+    [SerializeField] private Player[] players;
+
+    [SerializeField] private SpawnManager _spManager;
+    [SerializeField] private PowerUpSpawner _powerUpManager;
 
     [Header("UI Element")]
     public GameObject mainGameContainer;
@@ -27,15 +33,27 @@ public class GameManager : MonoBehaviour
     public Text gameOverText;
     public Text highscoreText;
     public Text scoreText;
-    public Image livesDisplay;
+    public Image[] livesDisplay;
     public Text restartcomment;
 
     private void Awake()
     {
 
+        Time.timeScale = 1f;
         gameOverContainer.SetActive(false);
         scoreText.text = "Score : " + 0;
-        livesDisplay.sprite = _liveSprites[3];
+
+        if (_spManager == null)
+        {
+            _spManager = GameObject.FindGameObjectWithTag("SpawnManager").GetComponent<SpawnManager>();
+        }
+
+        if (_powerUpManager == null)
+        {
+            _powerUpManager = GameObject.FindGameObjectWithTag("PowerUpSpawner").GetComponent<PowerUpSpawner>();
+        }
+
+        HideCursorMode(false);
 
     }
 
@@ -52,8 +70,24 @@ public class GameManager : MonoBehaviour
 
         HighScore();
 
+        if (_isCoOp_Mode == true)
+        {
+
+            AreAllPlayerDie();
+
+        }
+
+        if (_isGameOver == true)
+        {
+
+            PlayerIsDead();
+            OnGameOver();
+
+        }
+
     }
 
+#region Controller
 
     void AndroidController()
     {
@@ -62,7 +96,7 @@ public class GameManager : MonoBehaviour
         {
 
             LoadSceneFunction(sceneName);
-        
+
         }
 
     }
@@ -73,7 +107,7 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
 
-            PauseController();
+            PauseGame();
             //show the Pause Menu UI
 
         }
@@ -87,18 +121,36 @@ public class GameManager : MonoBehaviour
 
     }
 
+#endregion
+
 #region PauseMechanic
 
-    public void PauseController()
+    public void PauseGame()
     {
 
         _isGamePaused = !_isGamePaused;
-        pauseGameContainer.SetActive(_isGamePaused);
-        PauseGame();
+        PauseGameUISystem();
 
     }
 
-    void PauseGame()
+    #region Cursor Hide Mode
+
+    void HideCursorMode(bool _isVisible)
+    {
+        Cursor.visible = _isVisible;
+        if (_isVisible)
+        {
+            Cursor.lockState = CursorLockMode.None;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+    }
+
+    #endregion
+
+    void PauseGameUISystem()
     {
 
         if (_isGamePaused)
@@ -107,8 +159,11 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Time.timeScale = 1;
+            Time.timeScale = 1f;
         }
+
+        HideCursorMode(_isGamePaused);
+        pauseGameContainer.SetActive(_isGamePaused);
 
     }
 
@@ -135,14 +190,30 @@ public class GameManager : MonoBehaviour
 
     void HighScore()
     {
-        
-        int _highScore = PlayerPrefs.GetInt("HighScore");
-        Debug.Log("HighScore = " + _highScore);
 
-        if (_playerScore >= _highScore)
+        if (_isCoOp_Mode == true)
         {
 
-            PlayerPrefs.SetInt("HighScore", _playerScore);
+            int _highScore = PlayerPrefs.GetInt("Co-Op_HighScore");
+            if (_playerScore >= _highScore)
+            {
+
+                PlayerPrefs.SetInt("Co-Op_HighScore", _playerScore);
+                
+            }
+            highscoreText.text = "HighScore = " + _highScore.ToString();
+
+        }
+        else
+        {
+
+            int _highScore = PlayerPrefs.GetInt("HighScore");
+            if (_playerScore >= _highScore)
+            {
+
+                PlayerPrefs.SetInt("HighScore", _playerScore);
+
+            }
             highscoreText.text = "HighScore = " + _highScore.ToString();
 
         }
@@ -153,20 +224,15 @@ public class GameManager : MonoBehaviour
 
 #region PlayerLiveIndicator
 
-    public void PlayerDeadIndicator()
+    void PlayerIsDead()
     {
 
-        //when player dead 
-        //show the lives display to 0
-        livesDisplay.sprite = _liveSprites[0];
         //show gameover panel
         gameOverContainer.SetActive(true);
 
-        _isGameOver = true;
-
         StartCoroutine(GameOverTextAnimation());
         //pause the game
-        
+
     }
 
     IEnumerator GameOverTextAnimation()
@@ -181,15 +247,37 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void PlayerLiveIndicator(int playerHp)
+    public void PlayerLiveIndicator(int playerHp, int index)
     {
 
-        _isGameOver = false;
-        livesDisplay.sprite = _liveSprites[playerHp];
+        livesDisplay[index].sprite = _liveSprites[playerHp];
 
     }
 
-#endregion
+    void AreAllPlayerDie()
+    {
+
+        if (players[0]._isPlayerDefeat == true && players[1]._isPlayerDefeat == true)
+        {
+            _isGameOver = true;
+        }
+        else
+        {
+            _isGameOver = false;
+        }
+
+    }
+
+    void OnGameOver()
+    {
+        //communicated with spawn manager 
+        //let them know to stop running
+        _spManager.OnPlayerDead();
+        _powerUpManager.OnPlayerDead();
+
+    }
+
+    #endregion
 
 #region LoadScenes
 

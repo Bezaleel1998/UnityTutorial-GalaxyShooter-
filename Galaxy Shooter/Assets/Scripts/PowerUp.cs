@@ -61,44 +61,51 @@ public class PowerUp : MonoBehaviour
     private void OnTriggerEnter(Collider col)
     {
 
-        if (col.tag == "Player")
+        if (col.tag == "Player" || col.tag == "Player2")
         {
 
             Player playerScript = col.GetComponent<Player>();
 
             PowerUpSFX();
 
-            switch (_powerUpID)
-            {
-
-                case 0:
-                                        
-                    playerScript.TripleShootActivation(_activeTimeTripleShoot);
-                    Debug.Log("TripleShoot activated");
-                    
-                    break;
-
-                case 1:
-
-                    playerScript.SpeedPowerUpActivation(_speedMultiplier, _activeTimeSpeedUp);
-                    Debug.Log("SpeedUp activated");
-                    
-                    break;
-
-                case 2:
-
-                    playerScript.ShieldActive(_shieldActiveTime);
-                    Debug.Log("Shield activated");
-
-                    break;
-
-                default:
-                    Debug.LogError("This Object has null parameter");
-                    break;
-            }
+            PowerUpDetector(playerScript, _powerUpID);
 
             Destroy(this.gameObject);
 
+        }
+
+    }
+
+   private void PowerUpDetector(Player playerScript, int index)
+    {
+
+        switch (index)
+        {
+
+            case 0:
+
+                playerScript.TripleShootActivation(_activeTimeTripleShoot);
+                Debug.Log("TripleShoot activated");
+
+                break;
+
+            case 1:
+
+                playerScript.SpeedPowerUpActivation(_speedMultiplier, _activeTimeSpeedUp);
+                Debug.Log("SpeedUp activated");
+
+                break;
+
+            case 2:
+
+                playerScript.ShieldActive(_shieldActiveTime);
+                Debug.Log("Shield activated");
+
+                break;
+
+            default:
+                Debug.LogError("This Object has null parameter");
+                break;
         }
 
     }
