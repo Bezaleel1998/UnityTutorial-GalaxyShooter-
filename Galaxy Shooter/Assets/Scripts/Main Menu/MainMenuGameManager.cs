@@ -26,10 +26,10 @@ public class MainMenuGameManager : MonoBehaviour
 
     }
 
-    public void ChangeScene(string sceneName)
+    public void LoadSceneFunction(string name)
     {
 
-        SceneManager.LoadScene(sceneName);
+        SceneManager.LoadScene(name);
 
     }
 

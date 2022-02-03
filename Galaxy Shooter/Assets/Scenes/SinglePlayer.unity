@@ -1256,7 +1256,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Unpause Game
+  m_Text: Resume Game
 --- !u!222 &970730340
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1308,7 +1308,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 5b17a0088dcdf924fa92da5af1e1be07, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.7
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -2098,7 +2098,7 @@ GameObject:
   - component: {fileID: 1546844226}
   - component: {fileID: 1546844225}
   m_Layer: 5
-  m_Name: UnpauseGameButton
+  m_Name: Continue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2170,7 +2170,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2052901322}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: PauseController
+        m_MethodName: PauseGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3049,6 +3049,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f48470f0bd6e4f84184bd35d1ccd298e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isGameOver: 0
+  _isCoOp_Mode: 0
   _points: 10
   _liveSprites:
   - {fileID: 21300000, guid: ba53e111f0125654cabfd4eefaf3a657, type: 3}
@@ -3056,6 +3058,10 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 482c8e4c0346b704aa5f1760c3c989d5, type: 3}
   - {fileID: 21300000, guid: 9fe6f40efddf0b64fb68a3382b14a4db, type: 3}
   sceneName: SinglePlayer
+  players:
+  - {fileID: 2022812885319480264}
+  _spManager: {fileID: 0}
+  _powerUpManager: {fileID: 0}
   mainGameContainer: {fileID: 844780315}
   gameOverContainer: {fileID: 1983235679}
   quitGameContainer: {fileID: 872646458}
@@ -3063,7 +3069,8 @@ MonoBehaviour:
   gameOverText: {fileID: 1297598455}
   highscoreText: {fileID: 1811333223}
   scoreText: {fileID: 2145453861}
-  livesDisplay: {fileID: 1343466730}
+  livesDisplay:
+  - {fileID: 1343466730}
   restartcomment: {fileID: 513990024}
 --- !u!4 &2052901323
 Transform:
@@ -3231,3 +3238,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 55fdc1c8bd9043544b13628b847ef43b, type: 3}
+--- !u!114 &2022812885319480264 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2022812886502581740, guid: 55fdc1c8bd9043544b13628b847ef43b, type: 3}
+  m_PrefabInstance: {fileID: 2022812885319480263}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96a3048ceda368e47a69ff8549d3590b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

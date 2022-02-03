@@ -647,7 +647,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 768007498}
         m_TargetAssemblyTypeName: MainMenuGameManager, Assembly-CSharp
-        m_MethodName: ChangeScene
+        m_MethodName: LoadSceneFunction
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1228,14 +1228,14 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 2094664998}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 768007498}
         m_TargetAssemblyTypeName: MainMenuGameManager, Assembly-CSharp
-        m_MethodName: ChangeScene
+        m_MethodName: LoadSceneFunction
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

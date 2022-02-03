@@ -17,6 +17,7 @@ TagManager:
   - Asteroid
   - BulletClone
   - Player2
+  - PlayerCharacter2
   layers:
   - Default
   - TransparentFX

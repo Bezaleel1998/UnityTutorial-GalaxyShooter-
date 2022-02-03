@@ -13,7 +13,7 @@ public class AsteroidBehaviour : MonoBehaviour
 
     [Header("Other Game Object")]
     private GameManager _gm;
-    private Player _player;
+    //private Player _player;
     [SerializeField] private GameObject _explosionPrefab;
 
     [Header("Asteroid Boundaries")]
@@ -29,7 +29,7 @@ public class AsteroidBehaviour : MonoBehaviour
     {
 
         _gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
-        _player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        //_player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
 
         _rotationSpeed = Random.Range(-22f, 22f);
 
@@ -55,10 +55,11 @@ public class AsteroidBehaviour : MonoBehaviour
     public void AsteroidDestroyed()
     {
 
-        GameObject asteroidClone = Instantiate(_explosionPrefab, this.transform.position, Quaternion.identity);
+        GameObject explosion = Instantiate(_explosionPrefab, this.transform.position, Quaternion.identity);
         this.GetComponent<SphereCollider>().enabled = false;
-        Destroy(this.gameObject);
-        Destroy(asteroidClone.gameObject, 2.30f);
+        this.GetComponent<SpriteRenderer>().enabled = false;
+        Destroy(this.gameObject, 2.30f);
+        Destroy(explosion.gameObject, 2.30f);
         
     }
 
@@ -69,7 +70,18 @@ public class AsteroidBehaviour : MonoBehaviour
         {
 
             ExplosionSFX();
-            _player.Damage();
+            _gm.AddScore(20);
+            col.GetComponent<Player>().Damage();
+            AsteroidDestroyed();
+
+        }
+
+        if (col.tag == "Player2")
+        {
+
+            ExplosionSFX();
+            _gm.AddScore(20);
+            col.GetComponent<Player>().Damage();
             AsteroidDestroyed();
 
         }
@@ -77,15 +89,16 @@ public class AsteroidBehaviour : MonoBehaviour
         if (col.tag == "Shield")
         {
 
+            col.transform.parent.GetComponent<Player>().ShieldHit();
+            _gm.AddScore(20);
             ExplosionSFX();
-            _player.ShieldHit();
             AsteroidDestroyed();
 
         }
 
     }
 
-    void ExplosionSFX()
+    public void ExplosionSFX()
     {
 
         AudioSource.PlayClipAtPoint(_explosionSFX, this.transform.position, 1f);

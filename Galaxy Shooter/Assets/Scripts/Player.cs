@@ -15,9 +15,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _speed = 3.5f;
     [SerializeField] private GameObject _playerPrefab;
-    [SerializeField] private SpawnManager _spManager;
-    [SerializeField] private PowerUpSpawner _powerUpManager;
-    private Animator _player_animator;
+    [SerializeField] private Animator _player_animator;
 
     [Header("Player Movement")]
     private float _horizontalInput;
@@ -40,6 +38,8 @@ public class Player : MonoBehaviour
     [SerializeField] private bool _isTripleShootEnabled = false;
     [SerializeField] private bool _isSpeedUpEnabled = false;
     [SerializeField] private bool _isShieldEnabled = false;
+    [SerializeField] internal bool _isPlayerDefeat = false;
+    private GameObject playerChar;
 
     [Header("Other variable")]
     [SerializeField] private GameManager gM;
@@ -57,38 +57,25 @@ public class Player : MonoBehaviour
     private void Awake()
     {
 
+        if (gM == null)
+        {
+            gM = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        }
+
         PlayerSpawn();
 
         _shieldGameObject.SetActive(false);
 
-        if (_spManager == null)
-        {
-
-            //spManager = gameObject.GetComponent(typeof(SpawnManager)) as SpawnManager;
-            _spManager = GameObject.FindGameObjectWithTag("SpawnManager").GetComponent<SpawnManager>();
-
-        }
-
-        if (_powerUpManager == null)
-        {
-
-            _powerUpManager = GameObject.FindGameObjectWithTag("PowerUpSpawner").GetComponent<PowerUpSpawner>();
-
-        }
-
         if (_player_animator == null)
         {
-
-            _player_animator = GameObject.FindGameObjectWithTag("PlayerCharacter").GetComponent<Animator>();
-
-        }
-
+            _player_animator = playerChar.GetComponent<Animator>();
+        }        
 
     }
 
     void FixedUpdate()
     {
-        IsPlayerDead();
+        PlayerMechanic();
     }
 
     private void LateUpdate()
@@ -99,17 +86,26 @@ public class Player : MonoBehaviour
 
     #region PlayerSpawn,Damage,AndMovement
 
+    #region PlayerSpawn
+
     private void PlayerSpawn()
     {
 
         //spawn Player3D
         //take the current position = new position(0, 0, 0)
-        GameObject playerChar = Instantiate(_playerPrefab, transform.position, Quaternion.identity, this.transform);
+        playerChar = Instantiate(_playerPrefab, transform.position, Quaternion.identity, this.transform);
         playerChar.transform.name = _playerPrefab.name;
 
-        this.transform.position = new Vector3(0, -4, 0);
+        if (gM._isCoOp_Mode == false)
+        {
+
+            this.transform.position = new Vector3(0, -4, 0);
+
+        }
 
     }
+
+    #endregion
 
     #region Visual and Sound Effect
 
@@ -159,43 +155,67 @@ public class Player : MonoBehaviour
         _playerHP--;
 
         VisualDamageAnimation(_playerHP);
-        gM.PlayerLiveIndicator(_playerHP);
-
-        if (_playerHP <= 0)
-        {
-
-            ExplosionSFX();
-            Debug.Log("Player Has Been Destroyed");
-            PlayerDestroyed();
-            gM.PlayerDeadIndicator();//this script include the activation of GameOver text
-
-        }
-
-    }
-
-    private void IsPlayerDead()
-    {
+        VisualUICaller();
 
         //if life is 0 then player destroyed
         if (_playerHP <= 0)
         {
 
-            //Show GameOverUI
-            //Destroy Player3D inside this code (this parent)
-            GameObject playerChar = GameObject.FindGameObjectWithTag("PlayerCharacter");
-            Destroy(playerChar);
-            //communicated with spawn manager 
-            //let them know to stop running
-            _spManager.OnPlayerDead();
-            _powerUpManager.OnPlayerDead();
+            PlayerDestroyed();
+            Debug.Log("Player Has Been Destroyed");
+
+            if (gM._isCoOp_Mode == false)
+            {
+
+                gM._isGameOver = true;
+
+            }
+
+            _isPlayerDefeat = true;
+
+        }
+
+    }
+
+    void VisualUICaller()
+    {
+
+        if (gM._isCoOp_Mode == true)
+        {
+
+            if (this.tag == "Player")
+            {
+                gM.PlayerLiveIndicator(_playerHP, 0);
+            }
+            else
+            {
+                gM.PlayerLiveIndicator(_playerHP, 1);
+            }
 
         }
         else
+        {
+            gM.PlayerLiveIndicator(_playerHP, 0);
+        }
+
+    }
+
+    private void PlayerMechanic()
+    {
+                
+        if (_playerHP > 0)
         {
 
             PlayerMovement();
             PlayerAttack();
             ShieldStatus();
+
+            if (gM._isCoOp_Mode == false)
+            {
+                gM._isGameOver = false;
+            }
+
+            _isPlayerDefeat = false;
 
         }
 
@@ -204,6 +224,10 @@ public class Player : MonoBehaviour
     void PlayerDestroyed()
     {
 
+        //Destroy Player3D inside this code (this parent)
+        Destroy(playerChar);
+        ExplosionSFX();
+        //VFX
         GameObject explosionClone = Instantiate(_explosionPrefab, this.transform.position, Quaternion.identity, this.transform);
         Destroy(explosionClone.gameObject, 2.30f);
         this.GetComponent<BoxCollider>().enabled = false;
@@ -217,9 +241,63 @@ public class Player : MonoBehaviour
     void PlayerMovement()
     {
 
-        RuntimePlatformDetection();
+        //RuntimePlatformDetection();
+
+        if (gM._isCoOp_Mode == true)
+        {
+
+            MultiplayerDetection();
+
+        }
+        else
+        {
+            DesktopMovement();
+        }
 
         //new Vector3(x, y, z) * horizontal input (-1 or 1) * speed of movement * real time
+        Vector3 dir = new Vector3(_horizontalInput, _verticalInput, 0);
+        this.transform.Translate(dir.normalized * _speed * Time.deltaTime);
+
+    }
+
+
+    void RuntimePlatformDetection()
+    {
+
+        //detect if this is mobile or desktop application
+#if UNITY_ANDROID
+        AndroidMovement();
+#elif UNITY_STANDALONE_WIN
+        DesktopMovement();
+#endif
+
+    }
+
+
+    void MultiplayerDetection()
+    {
+
+        if (this.tag == "Player2")
+        {
+
+            Player2DesktopMovement();
+
+        }
+        else
+        {
+
+            DesktopMovement();
+
+        }
+
+    }
+
+
+    void Player2DesktopMovement()
+    {
+
+        _horizontalInput = Input.GetAxis("Mouse X");
+        _verticalInput = Input.GetAxis("Mouse Y");
 
         if (_horizontalInput > 0)
         {
@@ -241,32 +319,34 @@ public class Player : MonoBehaviour
 
         }
 
-        Vector3 dir = new Vector3(_horizontalInput, _verticalInput, 0);
-        this.transform.Translate(dir.normalized * _speed * Time.deltaTime);
-
     }
 
-
-    void RuntimePlatformDetection()
-    {
-
-        //detect if this is mobile or desktop application
-#if UNITY_ANDROID
-        AndroidMovement();
-#elif UNITY_STANDALONE_WIN
-        DesktopMovement();
-#endif
-
-        //Debug.Log("<color=lime>Horizontal Input Position = " + _horizontalInput +"</color>");
-        //Debug.Log("<color=lime>Vertical Input Position = " + _verticalInput + "</color>");
-
-    }
 
     void DesktopMovement()
     {
 
         _horizontalInput = Input.GetAxis("Horizontal");
         _verticalInput = Input.GetAxis("Vertical");
+
+        if (_horizontalInput > 0)
+        {
+
+            _player_animator.SetBool("TurnRight", true);
+
+        }
+        else if (_horizontalInput < 0)
+        {
+
+            _player_animator.SetBool("TurnLeft", true);
+
+        }
+        else
+        {
+
+            _player_animator.SetBool("TurnRight", false);
+            _player_animator.SetBool("TurnLeft", false);
+
+        }
 
     }
 
@@ -275,6 +355,26 @@ public class Player : MonoBehaviour
 
         _horizontalInput = CrossPlatformInputManager.GetAxis("Horizontal");
         _verticalInput = CrossPlatformInputManager.GetAxis("Vertical");
+
+        if (_horizontalInput > 0)
+        {
+
+            _player_animator.SetBool("TurnRight", true);
+
+        }
+        else if (_horizontalInput < 0)
+        {
+
+            _player_animator.SetBool("TurnLeft", true);
+
+        }
+        else
+        {
+
+            _player_animator.SetBool("TurnRight", false);
+            _player_animator.SetBool("TurnLeft", false);
+
+        }
 
     }
 
@@ -324,6 +424,36 @@ public class Player : MonoBehaviour
 
         }
 #elif UNITY_STANDALONE_WIN
+
+        if (gM._isCoOp_Mode == true)
+        {
+
+            if (this.tag == "Player2")
+            {
+
+                Player2Attack();
+
+            }
+            else
+            {
+
+                Player1Attack();
+
+            }
+
+        }
+        else
+        {
+            Player1Attack();
+        }
+
+#endif
+
+    }
+
+    void Player1Attack()
+    {
+
         if (Input.GetKey(KeyCode.Space) && Time.time > _canFire)
         {
 
@@ -333,7 +463,21 @@ public class Player : MonoBehaviour
             ShootCommence();
 
         }
-#endif
+
+    }
+
+    void Player2Attack()
+    {
+        
+        if (Input.GetKey(KeyCode.Mouse0) && Time.time > _canFire)
+        {
+
+            //for fire rate / cooldown system
+            _canFire = Time.time + _fireRate;
+
+            ShootCommence();
+
+        }
 
     }
 

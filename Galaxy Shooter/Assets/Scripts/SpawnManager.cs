@@ -47,6 +47,7 @@ public class SpawnManager : MonoBehaviour
             //random spawning at horizontal (x) for asteroid
             float randomAsteroidPos = Random.Range(_horizontalMin, _horizontalMax);
             Vector3 asteroidSpawnPos = new Vector3(randomAsteroidPos, _verticalMax, 0f);
+
             //enemy index 0 and asteroid index 1
             GameObject asteroidClone = Instantiate(_enemyPrefab[1], asteroidSpawnPos, Quaternion.identity, this.transform);
             asteroidClone.transform.name = _enemyPrefab[1].name + " " + i++;
