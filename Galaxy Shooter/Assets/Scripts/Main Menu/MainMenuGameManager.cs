@@ -21,8 +21,8 @@ public class MainMenuGameManager : MonoBehaviour
         /// C# write to txt file newLine with \r\n
         _highScore = PlayerPrefs.GetInt("HighScore");
         _coopHS = PlayerPrefs.GetInt("Co-Op_HighScore");
-        _highscoreText.text = "<color=lime>Highscore = " + _highScore.ToString() + "</color>\r\n" +
-            "<color=blue>Co-Op Highscore = " + _coopHS.ToString() + "</color>";
+        _highscoreText.text = "<color=lime>Highscore: " + _highScore.ToString() + "</color>\r\n" +
+            "<color=yellow>Co-Op Highscore: " + _coopHS.ToString() + "</color> ";
 
     }
 

@@ -39,6 +39,11 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
 
+        /*
+         * _coopHS1 = PlayerPrefs.GetInt("Co-Op_HighScore1");
+         *_coopHS2 = PlayerPrefs.GetInt("Co-Op_HighScore2");
+         */
+
         Time.timeScale = 1f;
         gameOverContainer.SetActive(false);
         scoreText.text = "Score : " + 0;
